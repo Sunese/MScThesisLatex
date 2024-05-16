@@ -1,0 +1,172 @@
+\documentclass{article}
+\usepackage[toc,page]{appendix}
+\usepackage{blindtext}
+\usepackage{titlesec}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{float}
+\usepackage[ddmmyyyy,hhmmss]{datetime}
+\usepackage{listings}% http://ctan.org/pkg/listings
+\usepackage{amsmath}
+% \usepackage[a4paper, total={6in, 10in}]{geometry}
+\usepackage{hyperref}
+\usepackage{biblatex}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage[most]{tcolorbox}
+\usepackage{varwidth}   %% provides varwidth environment
+\usepackage{graphics} % for drawing hole
+\usepackage{esvect} % for \vec vertical arrow over chars
+\usepackage{stmaryrd} % to make $\llbracket a+b\rrbracket$ ⟦exp⟧
+\usepackage{mathtools}
+\usepackage{MnSymbol}
+\usepackage{amssymb,graphicx}
+\usepackage{xcolor,luacolor,lua-ul}
+\usepackage[colorinlistoftodos]{todonotes}
+\newtheorem{definition}{Definition}
+
+\colorlet{myfigurecolor}{teal!90!blue}
+\colorlet{myfigurecolorback}{myfigurecolor!10!white}
+\colorlet{myexamplecolor}{cyan!40!green}
+\colorlet{myexamplecolorback}{myexamplecolor!10!white}
+\tcbset{
+    enhanced,
+    colback=myfigurecolor!5!white,
+    boxrule=0.1pt,
+    colframe=myfigurecolor,
+    fonttitle=\small\bfseries,
+    fontupper=\small,
+    center title
+}
+
+
+\newtcolorbox[blend into=figures]{myfigure}[2]{
+    breakable,
+    colback=myfigurecolorback, 
+    colframe=myfigurecolor, 
+    title={#1},
+    label={fig:#2},
+    center
+}
+
+% ,number within=chapter
+\newtcolorbox[auto counter]{example}[2]{
+    breakable,
+    colback=myexamplecolorback, 
+    colframe=myexamplecolor, 
+    title=Example \thetcbcounter: #1, 
+    label={ex:#2},
+    center
+}
+
+
+\addbibresource{references/ref.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=cyan,
+    citecolor=cyan,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{myexamplecolorback},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\setlength{\parindent}{0pt} % No indentation
+\title{Problem statement}
+\date{\today}
+\author{Sune Skaanning Engtorp}
+
+\begin{document}
+\maketitle
+Structure editors provide a way to manipulate some program's abstract syntax structure directly, in contrast to writing and editing a program's source code in plain text, which also requires a parser to produce an abstract syntax tree. An early example of this is shown by Reps and Teitelbaum\cite{teitelbaum-84} in 1984.
+By using a structure editor, the user can avoid syntax errors and might have a better overview of their source code. Moreover, unfinished blocks of code can be represented by syntactic holes, allowing the programmer to develop a mental model of their code, without getting distracted or blocked by syntax errors.
+
+% How is the project trying to solve it
+This project will implement a generalized type-safe structure editor, based on a proposed calculus\cite{aalborg}.
+
+% What are the criteria for a good solution
+The criteria for a good solution are the following:
+
+\begin{itemize}
+    \item The user can edit the abstract syntax from any program directly
+    \item The editor is generic, in the sense that it can handle the syntax of any language, not limited to programming languages
+    \item The editor can handle context-sensitive syntax, specifically binding mechanisms
+    \item The editor supports multiple views of the code being edited, such as a tree-view or a pretty-printed program based on the language's concrete syntax
+    \item The user should be able to specify the abstract and concrete syntax of any language in a non-challenging way
+\end{itemize}
+
+% What are the criteria for a minimal viable product
+The implementation relies on a proposed syntax-directed editor calculus\cite{aalborg} which promises to be language-independent and able to handle binding mechanisms. Hence, a minimal solution should fulfil the first two criteria, where a user can edit an AST directly (i.e. it is a structure editor) and the editor is generic, while the ability to handle context-sensitive syntax is crucial, yet not indispensable.
+
+% What are good examples?
+Since this project will propose a generic editor, it is crucial to provide a meaningful set of concrete examples, demonstrating that the solution is indeed generic and can be used for any language.
+This project will attempt to provide a meaningful set of concrete examples in a non-biased manner, with languages (or subsets thereof) of different paradigms and purposes. 
+
+%The set of examples should contain one or more popular general-purpose programming languages of different paradigms and have a distinctive syntax from the other examples in the set. 
+The set of examples should contain one or more popular general-purpose programming languages.
+All examples should have a clear syntactic distinction, to exclude dialects of the same language and otherwise very similar languages. \\ GitHub provides a top 30 ranking\cite{prog-lang-metrics} by number of unique \texttt{git} pushes with a given programming language on their platform, and this project will consider entries in the chart of popular character.
+
+Usage of the editor is not limited to programming languages, hence the set of examples should also contain one or more domain-specific languages and markup languages suitable for structure editing, in the sense that it contains declarations and binders.
+
+% What examples will the project show? 
+Based on prior criteria, the project will provide examples for subsets of the following languages:
+\begin{itemize}
+    \item C 
+    \item SQL 
+    \item \LaTeX
+\end{itemize}
+
+The C language\cite{c-iso-standard} is a popular general-purpose programming language deemed as a good candidate because of it being an imperative language, which stands in contrast to recent works on structure editors\cite{aalborg}\cite{godiksen}\cite{omar} that primarily focus on functional languages. The \texttt{C} programming language also has a strict and symbol-rich concrete syntax, which can easily lead to ill-formed programs when editing a \texttt{C} program in plain text. 
+\begin{example}{Ill-formed C program}{c-ill-form-prog}
+Below is an example of a C program that at first glance looks well-formed, but will be rejected because of a missing semi-colon at line 2:
+\begin{lstlisting}
+int main() {
+    int x = 0
+    for (int i; i = 0; i++) {
+        x++;
+    }
+    return 0;
+}
+\end{lstlisting}
+\end{example}
+
+The SQL language is a popular language deemed as a good candidate, because of it being a declarative language that also provides a contrast to both functional and imperative languages. There exist many dialects of SQL and for the sake of completeness, this project will refer to the PostgreSQL\cite{postgresql-about} variant in any SQL context. Different dialects, including PostgreSQL, have a strict syntax in common, which can also easily lead to ill-formed programs when editing in plain text.
+\begin{example}{Ill-formed SQL query}{sql-ill-formed}
+Below is an example of a PostgreSQL query which is ill-formed because of a missing comma in line 1 and wrong use of the equality operator in line 2:
+\begin{lstlisting}
+SELECT col-a col-b FROM table
+WHERE col-a == 'x';
+\end{lstlisting}
+\end{example}
+
+\LaTeX\cite{latex-about} is a markup language suitable for structure editing, which provides a contrast to the already-picked examples since it is not considered a programming language.
+
+\printbibliography
+
+\end{document}
