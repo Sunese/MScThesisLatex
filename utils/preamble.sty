@@ -1,0 +1,164 @@
+\ProvidesPackage{utils/preamble}
+
+\usepackage[utf8]{inputenc}
+\usepackage[toc,page]{appendix}
+\usepackage{blindtext}
+\usepackage{titlesec}
+\usepackage{graphicx} % Required for inserting images
+\usepackage{float}
+\usepackage[ddmmyyyy,hhmmss]{datetime}
+\usepackage{listings}% http://ctan.org/pkg/listings
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{biblatex}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{parskip}
+\usepackage[most]{tcolorbox}
+\usepackage{lineno}
+\usepackage[capitalise]{cleveref}
+\usepackage{amssymb,graphicx}
+\usepackage{stmaryrd}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+
+\usepackage{import}
+
+\colorlet{myfigurecolor}{teal!90!blue}
+\colorlet{myfigurecolorback}{myfigurecolor!10!white}
+\colorlet{myexamplecolor}{cyan!40!green}
+\colorlet{myexamplecolorback}{myexamplecolor!10!white}
+\colorlet{myinlinecolorback}{gray!10!white}
+\tcbset{
+    enhanced,
+    colback=myfigurecolor!5!white,
+    boxrule=0.1pt,
+    colframe=myfigurecolor,
+    fonttitle=\small\bfseries,
+    fontupper=\small,
+    center title
+}
+
+\newtcolorbox[blend into=figures]{myfigure}[2]{
+    colback=myfigurecolorback,
+    colframe=myfigurecolor,
+    title={#1},
+    label={#2},
+    center,
+    fontupper=\footnotesize
+}
+
+\newtcolorbox[auto counter]{example}[2]{
+    colback=myexamplecolorback,
+    colframe=myexamplecolor,
+    title=Example \thetcbcounter: #1,
+    label={#2},
+    center,
+    breakable,
+    fontupper=\footnotesize
+}
+
+\crefname{tcb@cnt@example}{Example}{Example}
+\Crefname{tcb@cnt@example}{Example}{Example}
+
+\crefname{tcb@cnt@myfigure}{Figure}{Figure}
+\Crefname{tcb@cnt@myfigure}{Figure}{Figure}
+
+\addbibresource{references/ref.bib}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=cyan,
+    citecolor=cyan,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen
+}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinelanguage{elm}
+{
+    % List of keywords
+    morekeywords={
+            alias,
+            as,
+            case,
+            else,
+            exposing,
+            if,
+            import,
+            in,
+            let,
+            module,
+            of,
+            port,
+            then,
+            type,
+            where
+        },
+    sensitive=true, % Keywords are case-sensitive
+    morecomment=[s]{\{-}{-\}}, % s is for start and end delimiter
+    morecomment=[l]{--},
+    morestring=[b]" % Defines that strings are enclosed in double quotes
+}
+
+
+\lstdefinestyle{inline}{
+    basicstyle=\small\ttfamily, % Global Code Style
+    captionpos=b, % Position of the Caption (t for top, b for bottom)
+    extendedchars=true, % Allows 256 instead of 128 ASCII characters
+    tabsize=2, % Number of spaces indented when discovering a tab 
+    columns=fixed, % Make all characters equal width
+    keepspaces=true, % Does not ignore spaces to fit width, convert tabs to spaces
+    breaklines=true, % Wrap lines if they don't fit
+    showstringspaces=false, % Lets spaces in strings appear as real spaces
+    mathescape=true, % Enable math escape
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    backgroundcolor=\color{myinlinecolorback},
+}
+
+\definecolor{elm-orange}{RGB}{240,173,0}
+\definecolor{elm-gray}{RGB}{149,149,138}
+\definecolor{elm-blue}{RGB}{0,168,198}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{myexamplecolorback},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\newcommand{\mybox}[3]{\begin{center}
+        \begin{myfigure}{#1}{#2}
+            \begin{varwidth}{\textwidth}#3\end{varwidth}
+        \end{myfigure}
+    \end{center}}
+
+\newcommand{\cleftsemicirc}{\put(3.5,2.5){\oval(5,10)[l]}\put(3.5,-2.5){\line(0,0){10}}\phantom{\circ}}
+\newcommand{\crightsemicirc}{\put(1.5,2.5){\oval(5,10)[r]}\put(1.5,-2.5){\line(0,0){10}}\phantom{\circ}}
+\newcommand{\hole}{\cleftsemicirc \crightsemicirc}
+\newcommand{\enc}[1]{\llbracket #1 \rrbracket}
+\newcommand{\conf}[2]{\langle #1,#2 \rangle}
+
+\lstset{style=mystyle}
+
+\setlength{\parindent}{0pt} % No indentation
