@@ -1,0 +1,1 @@
+{"rule":"MORFOLOGIK_RULE_EN_US","sentence":"^\\QThe internal nodes in an ast are operators \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q with arity \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q, describing the sort of the operator itself and its arguments.\\E$"}

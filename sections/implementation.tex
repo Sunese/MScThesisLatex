@@ -7,10 +7,10 @@ A criterion for the good solution of this project is also the implementation of 
 
 It can be a challenge from the user's perspective to provide a specification based on what the calculus assumes. Therefore, it is ideal for the implementation to provide other means of describing the syntax of a language.
 
-In terms of early examples, Metal\cite{metal} has been used in the Mentor \cite{mentor-applications} and CENTAUR \cite{centaur} systems.
+In terms of early examples, Metal\cite{metal} has been used in the Mentor\cite{mentor-applications} and CENTAUR\cite{centaur} systems.
 Metal compiles a specification containing concrete syntax, abstract syntax and tree building functions for a formalism $F$ into a Virtual Tree Processor (VTP) formalism, a concrete syntax parser produced by YACC\cite{yacc} and a tree generator which uses VTP primitives to construct abstract syntax trees.
 
-Another example with the same purpose is Zephyr ASDL (Abstract Syntax Description Language)\cite{zephyr}, where the authors have built a tool that converts an ASDL specification into C, C++, Java and ML data-structure definitions. The authors consider ASDL a simpler alternative to other abstract syntax description languages, such as ASN.1 \cite{asn1}.
+Another example with the same purpose is Zephyr ASDL (Abstract Syntax Description Language)\cite{zephyr}, where the authors have built a tool that converts an ASDL specification into C, C++, Java and ML data-structure definitions. The authors consider ASDL a simpler alternative to other abstract syntax description languages, such as ASN.1\cite{asn1}.
 
 However, both examples have lack of binding mechanisms in abstract syntax in common. This motivates another possibility of defining a specification language for the to-be-implemented generalized editor itself, which can assist the user in describing the syntax. This would also require a parser that can parse the necessary information assumed by the calculus (including binders). Picking this route allows the project to avoid spending time analyzing different tools and developing a workaround for binders.
 
@@ -141,7 +141,7 @@ To make the specification language parseable, a more computer-friendly format is
 \end{myfigure}
 
 \begin{myfigure}{Subset of syntax of a small SQL language in a parseable format}{fig:sql-lang-parseable}
-  \begin{lstlisting}
+\begin{lstlisting}[backgroundcolor=\color{myfigurecolorback}]
 query in Query
 cmd in Command
 id in Id
@@ -163,20 +163,20 @@ or if a generic model might suffice.
 
 Automatic generation of source code offers the benefit of directly representing
 provided operators, along with their arity and sort, within an algebraic data
-type (referred to as type in Elm and data in Haskell).
+type (referred to as \texttt{type} in Elm and \texttt{data} in Haskell).
 This ensures that only well-formed terms can be represented using the algebraic
 data types.
 
 However, opting for this method might require automatic updates to both the
 definitions and signatures of some functions.
 This presents a challenge in ensuring that these functions maintain their intended
-behaviour after the updates.
+behavior after the updates.
 
 \begin{example}{Algebraic data types for a small C syntax}{ex:c-alg-data-types}
   Given example \cref{ex:c-spec}, one can generate the following custom types in Elm:
   \begin{lstlisting}
 type alias Bind a b =
-    ( a, b )
+    ( List a, b )
 type Prog
     = Program FunDecls
 type Block
@@ -222,14 +222,13 @@ type Id
     = Ident String
 \end{lstlisting}
 
-  The $Bind$ type alias is simply a tuple of 2 given type variables. This would be a part of the generated source code.
+  The $Bind$ type alias is simply a tuple of 2 given type variables,
+  where the first element is a list. This is used to represent binders in the
+  abstract syntax, however with the limitation of only allowing abts of a single
+  sort to be bound. 
 \end{example}
 
-In contrast, a generic solution without the need for generating new source reduces the risk of syntax errors in the target language for the editor itself. A generic solution involves designing a model capable of holding the necessary information from any syntax. An approach for this is provided in figure \cref{fig:generic-types}. However, this approach requires additional well-formedness checks on any given term concerning the syntax.
-
-As an alternative to having specific types for each given syntactic category
-(as in example \cref{ex:c-alg-data-types}), one can design a generic model with
-records in Elm, as in listing \cref{lst:elm-ex}.
+In contrast, a generic solution without the need for generating new source reduces the risk of syntax errors in the target language for the editor itself. A generic solution involves designing a model capable of holding the necessary information from any syntax. An approach for this is provided in \cref{lst:elm-ex}. However, this approach requires additional well-formedness checks on any given term concerning the syntax.
 
 \begin{lstlisting}[backgroundcolor=\color{myfigurecolorback},caption={Elm Records for storing syntax information},label={lst:elm-ex}]
 type alias Syntax =
@@ -265,7 +264,7 @@ replaced with relevant data or code snippets associated with the parsed syntax.
 
 Besides offering the ability to generate source code, it offers offers automatic
 imports and built-in type inference. Example usage of Elm CodeGen from
-the documentation\cite{elm-codegen-package} is given in figure \cref{fig:codegen-ex}.
+the documentation\cite{elm-codegen-package} is given in \cref{fig:codegen-ex}.
 
 \begin{myfigure}{Elm CodeGen usage}{fig:codegen-ex}
   Following declares an Elm record and passes it to a \texttt{ToString} function:
@@ -328,7 +327,7 @@ type alias RawSynCat =
 
 If parsing of the raw syntax is successful, the raw model will
 be transformed into a separate model built around the \texttt{Syntax}
-type alias (listing \cref{lst:syntax-model}).
+type alias (\cref{lst:syntax-model}).
 Transformations include converting the string-representation of the arity
 into its own \texttt{Arity} type, which is a simple list of tuples,
 where the first element is a list of variables to be bound within the second element.
@@ -404,7 +403,7 @@ type Statement
 
 Having generated all sorts and operators as algebraic data types in Elm,
 the next step is to implement functionality for editor expressions.
-For example, consider the cursor substitution operator (definition \cref{X}),
+For example, consider the cursor substitution operator (\cref{fig:red-rules-sub}),
 where the editor calculus enforces that operators can only be substituted
 with operators of same sort. Initially, a straightforward approach involves
 having a substitution function for each sort $s \in \mathcal{S}$.
@@ -414,11 +413,11 @@ with an operator of the same sort. A solution to this could be
 % % TODO: replace this with a more interesting example, i.e. conditionals
 using type classes, where we might have a type class called \texttt{substitutable}
 and having an instance for each sort.
-Having a typeclass is possible in Haskell (see listing \cref{lst:haskell-typeclass}),
+Having a typeclass is possible in Haskell (\cref{lst:haskell-typeclass}),
 but typeclasses are not directly supported by Elm.
 They can however be simulated with Elm records, as shown in the "typeclasses"
 Elm package\cite{elm-typeclass-package}.
-An example of such a simulation is shown in listing \cref{lst:elm-typeclass}.
+An example of such a simulation is shown in \cref{lst:elm-typeclass}.
 This typeclass simulation in Elm has the disadvantage of forcing an explicit
 reference to the typeclass "instance" in a generic function, in contrast to Haskell.
 This leads to more verbose code and more source code generation.
@@ -468,19 +467,19 @@ doIntSub =
 \subsection{Decomposing trees}
 The implementation needs to be able to check if a given abt is well-formed,
 or in other words, if it can be decomposed into $C[\dot{a}]$, where $C$ is a
-cursor-context (definition \cref{def:cursor-context}) and $\dot{a}$ is a
-well-formed abt (definition \cref{def:well-formed}).
+cursor-context (\cref{def:cursor-context}) and $\dot{a}$ is a
+well-formed abt (\cref{def:well-formed-trees}).
 
-First of all, it is necessary to know which symbol in the given syntax representation
+First, it is necessary to know which symbol in the given syntax representation
 is intended as the starting symbol. Only the syntactic category of the starting symbol
 would need functions supporting decomposition.
 In other words, it does not make sense to decompose an abt of some sort which
 cannot be derived to a well-formed program.
 This aspect has not been considered yet, and as a temporary solution,
 a type wrapper called \texttt{Base} has been introduced, which has an entry for
-every syntactic category in the given syntax. For example, see listing \cref{lst:base-ex}
+every syntactic category in the given syntax. For example, see \cref{lst:base-ex}
 for an excerpt of the \texttt{Base} type generated for the C language in
-example \cref{ex:c-spec}.
+\cref{ex:c-spec}.
 
 \begin{lstlisting}[language=elm,style=inline,caption={Example of the Base type},label={lst:base-ex}]
 type Base
@@ -540,7 +539,7 @@ and how we always get a unique decomposition, as long as the abt to be decompose
 \subsubsection{Cursor path}
 
 Generating a path to the cursor in the abt of sort $s \in \mathcal{S}$ extended with
-hole and cursor operators (definition \cref{def:holes-cursors-extension})
+hole and cursor operators (\cref{X})
 simplifies the process of generating the cursor context. The path tells us
 which operator $o^C \in \mathcal{O}^C$ replaces each $o \in \mathcal{O}$.
 The list can be generated by performing pre-order traversal of the tree to be decomposed,

@@ -1,4 +1,4 @@
-\ProvidesPackage{utils/preamble}
+\ProvidesPackage{preamble}
 
 \usepackage[utf8]{inputenc}
 \usepackage[toc,page]{appendix}
@@ -10,7 +10,7 @@
 \usepackage{listings}% http://ctan.org/pkg/listings
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage{biblatex}
+\usepackage[backend=bibtex]{biblatex}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{parskip}
 \usepackage[most]{tcolorbox}
@@ -25,9 +25,15 @@
 
 \colorlet{myfigurecolor}{teal!90!blue}
 \colorlet{myfigurecolorback}{myfigurecolor!10!white}
+
 \colorlet{myexamplecolor}{cyan!40!green}
 \colorlet{myexamplecolorback}{myexamplecolor!10!white}
+
+\colorlet{defcolor}{pink!90!black}
+\colorlet{defcolorback}{defcolor!10!white}
+
 \colorlet{myinlinecolorback}{gray!10!white}
+
 \tcbset{
     enhanced,
     colback=myfigurecolor!5!white,
@@ -43,8 +49,7 @@
     colframe=myfigurecolor,
     title={#1},
     label={#2},
-    center,
-    fontupper=\footnotesize
+    center
 }
 
 \newtcolorbox[auto counter]{example}[2]{
@@ -54,14 +59,25 @@
     label={#2},
     center,
     breakable,
-    fontupper=\footnotesize
+}
+
+\newtcolorbox[auto counter]{definition}[2]{
+    colback=defcolorback,
+    colframe=defcolor,
+    title=Definition \thetcbcounter: #1,
+    label={#2},
+    center,
+    breakable
 }
 
 \crefname{tcb@cnt@example}{Example}{Example}
 \Crefname{tcb@cnt@example}{Example}{Example}
 
-\crefname{tcb@cnt@myfigure}{Figure}{Figure}
-\Crefname{tcb@cnt@myfigure}{Figure}{Figure}
+\crefname{tcb@cnt@myfigure}{MyFigure}{MyFigure}
+\Crefname{tcb@cnt@myfigure}{MyFigure}{MyFigure}
+
+\crefname{tcb@cnt@definition}{Definition}{Definition}
+\Crefname{tcb@cnt@definition}{Definition}{Definition}
 
 \addbibresource{references/ref.bib}
 

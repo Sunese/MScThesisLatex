@@ -38,13 +38,14 @@ Based on prior criteria, the project will provide examples for subsets of the fo
 \end{itemize}
 
 The C language\cite{c-iso-standard} is a popular general-purpose programming language deemed as a good candidate because of it being an imperative language, which stands in contrast to recent works on structure editors\cite{aalborg}\cite{godiksen}\cite{omar} that primarily focus on functional languages. The \texttt{C} programming language also has a strict and symbol-rich concrete syntax, which can easily lead to ill-formed programs when editing a \texttt{C} program in plain text.
+
 \begin{example}{Ill-formed C program}{ex:c-ill-form-prog}
-    Below is an example of a C program that at first glance looks well-formed, but will be rejected because of a missing semi-colon at line 2:
+    Below is an example of a C program that at first glance looks well-formed, but will be rejected because of a missing semicolon at line 4:
     \begin{lstlisting}
 int main() {
-    int x = 0
+    int x = 0;
     for (int i; i = 0; i++) {
-        x++;
+        x++
     }
     return 0;
 }

@@ -1,7 +1,13 @@
 \documentclass[12pt, a4paper]{article}
-\usepackage{utils/preamble}
+\usepackage{preamble}
+\usepackage[english, science]{utils/ku-frontpage}
 
-\import{./}{title.tex}
+\assignment{Master's thesis}
+\author{Sune Skaanning Engtorp}
+\advisor{Advisor: Hans Hüttel}
+\title{Implementation of a type-safe \\ generalized syntax-directed editor}
+\subtitle{}
+\date{Submitted: 31/05/2024}
 
 \begin{document}
 \maketitle
@@ -12,7 +18,7 @@
 \newpage
 \setcounter{page}{1}
 
-\input{sections/problem-statement.tex}
+\input{sections/abstract.tex}
 
 \input{sections/introduction.tex}
 
@@ -21,6 +27,10 @@
 \input{sections/aalborg-project-summary.tex}
 
 \input{sections/implementation.tex}
+
+\input{sections/editor-examples.tex}
+
+\input{sections/conclusion.tex}
 
 \printbibliography
 
