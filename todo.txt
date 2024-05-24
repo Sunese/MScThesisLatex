@@ -1,4 +1,11 @@
-Implementation:
+- Have chatgpt generate pseudocode for algos
+
+- codegen parent and substitution and write about them
+  (perhaps have chatgpt do it)
+
+- have chatgpt write conclusion and abstract
+
+needs writing:
     - Specification language subsec: 
         specification language in BNF notation
     - Decomposing trees section:
@@ -7,10 +14,6 @@ Implementation:
         - add note about only having the cursor in
           root for well-formed trees 
     - replace typeclass example with a more interesting one
-    - cursor path subsubsec
-        - fill out the generated fun example
-    - generating source code subsec
-        - add pseudocode for creating types for each sort
     - editor examples
     - conclusion
     

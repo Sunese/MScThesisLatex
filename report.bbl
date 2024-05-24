@@ -100,7 +100,9 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{B}
     \field{sortinithash}{B}
-    \field{booktitle}{Proceedings of the {ACM} {SIGSOFT/SIGPLAN} Software Engineering Symposium on Practical Software Development Environments, Boston, Massachusetts, USA, November 28-30, 1988}
+    \field{booktitle}{Proceedings of the {ACM} {SIGSOFT/SIGPLAN} Software
+  Engineering Symposium on Practical Software Development Environments, Boston,
+  Massachusetts, USA, November 28-30, 1988}
     \verb{doi}
     \verb 10.1145/64135.65005
     \endverb
@@ -162,9 +164,11 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{D}
     \field{sortinithash}{D}
-    \field{booktitle}{Proceedings, 7th International Conference on Software Engineering, Orlando, Florida, USA, March 26-29, 1984}
+    \field{booktitle}{Proceedings, 7th International Conference on Software
+  Engineering, Orlando, Florida, USA, March 26-29, 1984}
     \field{pages}{346\bibrangedash 357}
-    \field{title}{Practical Applications of a Syntax Directed Program Manipulation Environment}
+    \field{title}{Practical Applications of a Syntax Directed Program
+  Manipulation Environment}
     \verb{url}
     \verb http://dl.acm.org/citation.cfm?id=801990
     \endverb
@@ -227,7 +231,9 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{G}
     \field{sortinithash}{G}
-    \field{booktitle}{Proceedings of the 2021 {ACM} {SIGPLAN} Workshop on Partial Evaluation and Program Manipulation, PEPM@POPL 2021, Virtual Event, Denmark, January 18-19, 2021}
+    \field{booktitle}{Proceedings of the 2021 {ACM} {SIGPLAN} Workshop on
+  Partial Evaluation and Program Manipulation, PEPM@POPL 2021, Virtual Event,
+  Denmark, January 18-19, 2021}
     \verb{doi}
     \verb 10.1145/3441296.3441393
     \endverb
@@ -245,7 +251,8 @@
          family={Group},
          familyi={G\bibinitperiod},
          given={The PostgreSQL Global\bibnamedelima Development},
-         giveni={T\bibinitperiod\bibinitdelim P\bibinitperiod\bibinitdelim G\bibinitperiod\bibinitdelim D\bibinitperiod},
+         giveni={T\bibinitperiod\bibinitdelim P\bibinitperiod\bibinitdelim
+  G\bibinitperiod\bibinitdelim D\bibinitperiod},
       }}%
     }
     \strng{namehash}{GTPGD1}
@@ -300,7 +307,7 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{H}
     \field{sortinithash}{H}
-    \field{howpublished}{\url{https://en.wikibooks.org/wiki/Haskell/More_on_datatypes}}
+  \field{howpublished}{\url{https://en.wikibooks.org/wiki/Haskell/More_on_datatypes}}
     \field{note}{Accessed: 13/03/2024}
     \field{title}{Named Fields (Record Syntax)}
   \endentry
@@ -320,7 +327,8 @@
     \field{sortinithash}{I}
     \field{edition}{Fourth}
     \field{pages}{520}
-    \field{title}{{ISO\slash IEC 9899:2018 Information technology --- Programming languages --- C}}
+    \field{title}{{ISO\slash IEC 9899:2018 Information technology ---
+  Programming languages --- C}}
     \verb{url}
     \verb https://www.iso.org/standard/74528.html
     \endverb
@@ -342,7 +350,7 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{J}
     \field{sortinithash}{J}
-    \field{howpublished}{\url{https://www.cs.utexas.edu/users/novak/yaccpaper.htm}}
+  \field{howpublished}{\url{https://www.cs.utexas.edu/users/novak/yaccpaper.htm}}
     \field{note}{Accessed: 26/03/2024}
     \field{title}{Yacc: Yet Another Compiler-Compiler}
   \endentry
@@ -557,7 +565,7 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{P}
     \field{sortinithash}{P}
-    \field{howpublished}{\url{https://package.elm-lang.org/packages/mdgriffith/elm-codegen/latest/}}
+  \field{howpublished}{\url{https://package.elm-lang.org/packages/mdgriffith/elm-codegen/latest/}}
     \field{note}{Accessed: 18/03/2024}
     \field{title}{Elm CodeGen}
   \endentry
@@ -577,7 +585,7 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{P}
     \field{sortinithash}{P}
-    \field{howpublished}{\url{https://package.elm-lang.org/packages/nikita-volkov/typeclasses/latest/}}
+  \field{howpublished}{\url{https://package.elm-lang.org/packages/nikita-volkov/typeclasses/latest/}}
     \field{note}{Accessed: 17/04/2024}
     \field{title}{Elm Typeclasses}
   \endentry
@@ -620,7 +628,9 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{R}
     \field{sortinithash}{R}
-    \field{booktitle}{Proceedings of the {ACM} {SIGSOFT/SIGPLAN} Software Engineering Symposium on Practical Software Development Environments, Pittsburgh, Pennsylvania, USA, April 23-25, 1984}
+    \field{booktitle}{Proceedings of the {ACM} {SIGSOFT/SIGPLAN} Software
+  Engineering Symposium on Practical Software Development Environments,
+  Pittsburgh, Pennsylvania, USA, April 23-25, 1984}
     \verb{doi}
     \verb 10.1145/800020.808247
     \endverb
@@ -658,7 +668,8 @@
     \endverb
     \field{number}{9}
     \field{pages}{563\bibrangedash 573}
-    \field{title}{The Cornell Program Synthesizer: {A} Syntax-Directed Programming Environment}
+    \field{title}{The Cornell Program Synthesizer: {A} Syntax-Directed
+  Programming Environment}
     \verb{url}
     \verb https://doi.org/10.1145/358746.358755
     \endverb
@@ -711,7 +722,8 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{W}
     \field{sortinithash}{W}
-    \field{booktitle}{Proceedings of the Conference on Domain-Specific Languages, DSL'97, Santa Barbara, California, USA, October 15-17, 1997}
+    \field{booktitle}{Proceedings of the Conference on Domain-Specific
+  Languages, DSL'97, Santa Barbara, California, USA, October 15-17, 1997}
     \field{pages}{213\bibrangedash 228}
     \field{title}{The Zephyr Abstract Syntax Description Language}
     \verb{url}
