@@ -1,0 +1,16 @@
+Implementation:
+    - Specification language subsec: 
+        specification language in BNF notation
+    - Decomposing trees section:
+        - add (functional) pseudocode for decomposition algos
+        - consider if they should replace code exs
+        - add note about only having the cursor in
+          root for well-formed trees 
+    - replace typeclass example with a more interesting one
+    - cursor path subsubsec
+        - fill out the generated fun example
+    - generating source code subsec
+        - add pseudocode for creating types for each sort
+    - editor examples
+    - conclusion
+    
