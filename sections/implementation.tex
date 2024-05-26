@@ -465,6 +465,7 @@ doIntSub =
 \end{lstlisting}
 
 \subsection{Decomposing trees}
+% TODO: smooth transition to this section
 The implementation needs to be able to check if a given abt is well-formed,
 or in other words, if it can be decomposed into $C[\dot{a}]$, where $C$ is a
 cursor-context (\cref{def:cursor-context}) and $\dot{a}$ is a
@@ -829,4 +830,21 @@ The cursor context and well-formed tree pair as defined above will decompose
 any well-formed abt into a unique pair of a cursor context and a well-formed tree.
 
 \subsection{Editor expressions}
+
+Having a unique way to decompose trees, the next step is to outline how editor
+expressions on well-formed trees can be implemented. Editor expressions are fundamental to
+enabling interaction within the editor, providing the means to manipulate
+a program through various operations. These include cursor movement, substitution
+and conditional expressions.
+
+\subsubsection{Cursor movement}
+The general form of reduction rule for substitution is given in \cref{fig:red-rules-movement}
+
+\subsubsection{Substitution}
+Substitution operations
+
+\subsubsection{Conditional expressions}
+Conditional expressions provide a way to perform different operations based on
+. These expressions evaluate conditions and execute corresponding editor actions
+if the conditions are met.
 

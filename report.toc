@@ -3,10 +3,10 @@
 \contentsline {subsection}{\numberline {2.1}Structure editors}{1}{subsection.2.1}%
 \contentsline {subsection}{\numberline {2.2}Editor generators}{2}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Partial evaluation}{3}{subsection.2.3}%
-\contentsline {section}{\numberline {3}Abstract Syntax Trees}{4}{section.3}%
+\contentsline {section}{\numberline {3}Abstract Syntax Trees}{5}{section.3}%
 \contentsline {section}{\numberline {4}Abstract Binding Trees}{5}{section.4}%
 \contentsline {section}{\numberline {5}Generalized editor calculus}{6}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Abstract syntax}{6}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.1}Abstract syntax}{7}{subsection.5.1}%
 \contentsline {subsubsection}{\numberline {5.1.1}Editor calculus}{8}{subsubsection.5.1.1}%
 \contentsline {subsubsection}{\numberline {5.1.2}Cursorless trees}{8}{subsubsection.5.1.2}%
 \contentsline {subsubsection}{\numberline {5.1.3}Cursor Context}{9}{subsubsection.5.1.3}%
@@ -27,5 +27,8 @@
 \contentsline {subsubsection}{\numberline {6.4.1}Cursor path}{34}{subsubsection.6.4.1}%
 \contentsline {subsubsection}{\numberline {6.4.2}Cursor context}{36}{subsubsection.6.4.2}%
 \contentsline {subsubsection}{\numberline {6.4.3}Well-formed tree}{38}{subsubsection.6.4.3}%
-\contentsline {section}{\numberline {7}Editor Examples}{39}{section.7}%
-\contentsline {section}{\numberline {8}Conclusion}{39}{section.8}%
+\contentsline {subsection}{\numberline {6.5}Editor expressions}{41}{subsection.6.5}%
+\contentsline {subsubsection}{\numberline {6.5.1}Cursor movement}{41}{subsubsection.6.5.1}%
+\contentsline {subsubsection}{\numberline {6.5.2}Substitution}{41}{subsubsection.6.5.2}%
+\contentsline {section}{\numberline {7}Editor Examples}{41}{section.7}%
+\contentsline {section}{\numberline {8}Conclusion}{41}{section.8}%
