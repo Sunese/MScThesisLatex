@@ -401,73 +401,24 @@ type Statement
 \end{lstlisting}
 \end{example}
 
+\subsection{Editor expressions}
+
 Having generated all sorts and operators as algebraic data types in Elm,
-the next step is to implement functionality for editor expressions.
-For example, consider the cursor substitution operator (\cref{fig:red-rules-sub}),
-where the editor calculus enforces that operators can only be substituted
-with operators of same sort. Initially, a straightforward approach involves
-having a substitution function for each sort $s \in \mathcal{S}$.
-This approach of course leads an implementer to consider generalization,
-i.e. how a single function can take any cursor-encapsulated abt and replace it
-with an operator of the same sort. A solution to this could be
-% % TODO: replace this with a more interesting example, i.e. conditionals
-using type classes, where we might have a type class called \texttt{substitutable}
-and having an instance for each sort.
-Having a typeclass is possible in Haskell (\cref{lst:haskell-typeclass}),
-but typeclasses are not directly supported by Elm.
-They can however be simulated with Elm records, as shown in the "typeclasses"
-Elm package\cite{elm-typeclass-package}.
-An example of such a simulation is shown in \cref{lst:elm-typeclass}.
-This typeclass simulation in Elm has the disadvantage of forcing an explicit
-reference to the typeclass "instance" in a generic function, in contrast to Haskell.
-This leads to more verbose code and more source code generation.
+the next step is to implement functionality for manipulating trees.
+In terms of the editor calculus\cite{aalborg},
+manipulating an abt involves editor expressions $E \in Edt$ (\cref{fig:as-editor}),
+which include atomic prefix commands $\pi \in Apc$ for abt traversal
+and modification, and conditions $\phi \in Eec$ for conditional manipulation with
+respect to modal logic within the encapsulated abt.
 
-% TODO: replace this with a more interesting example, i.e. conditionals
-\begin{lstlisting}[language=Haskell,style=inline,caption={Haskell typeclass example},label={lst:haskell-typeclass}]
--- typeclass
-class Substitutable a where 
-    substitute :: a -> a -> a
-    
--- instance of typeclass
-instance Substitutable a where
-    substitute _ replacement = replacement
+\subsubsection{Decomposing trees}
 
--- example usage
-doIntSub :: Int
-doIntSub = substitute 1 2 
-\end{lstlisting}
+All editor expressions assume a well-formed abt, which is a tree
+with exactly one cursor, which cannot be guaranteed by the generated
+algebraic data types, as every sort has an associated cursor operator.
 
-
-% TODO: replace this with a more interesting example, i.e. conditionals
-\begin{lstlisting}[language=elm,style=inline,caption={Elm typeclass simulation example},label={lst:elm-typeclass}]
-{-| Simulate a type class
--}
-type alias Substitutable a =
-    { substitute : a -> a -> a }
-
-{-| Generic instance of the typeclass, we don't need any specific implementation for each type/sort, we just want to assure that the expression and replacement are of the same type. This is constrained by the `substitute` function signature in the (simulated) typeclass.
--}
-substituteAny : Substitutable a
-substituteAny =
-    { substitute = \_ replacement -> replacement }
-
-{-| Polymorphic function that can be used with any type that has an instance of the `Substitutable` typeclass.
--}
-substitute : Substitutable a -> a -> a -> a
-substitute substitutable expression replacement =
-    substitutable.substitute expression replacement
-
-{-| Example usage
--}
-doIntSub : Int
-doIntSub =
-    substitute substituteAny 1 2
-\end{lstlisting}
-
-\subsection{Decomposing trees}
-% TODO: smooth transition to this section
-The implementation needs to be able to check if a given abt is well-formed,
-or in other words, if it can be decomposed into $C[\dot{a}]$, where $C$ is a
+However, these operations rely on a well-formed abt, which is given
+by decomposing an abt $a$ into $C[\dot{a}]$, where $C$ is a
 cursor-context (\cref{def:cursor-context}) and $\dot{a}$ is a
 well-formed abt (\cref{def:well-formed-trees}).
 
@@ -829,22 +780,94 @@ createToWellFormedFun syntax =
 The cursor context and well-formed tree pair as defined above will decompose
 any well-formed abt into a unique pair of a cursor context and a well-formed tree.
 
-\subsection{Editor expressions}
-
-Having a unique way to decompose trees, the next step is to outline how editor
-expressions on well-formed trees can be implemented. Editor expressions are fundamental to
-enabling interaction within the editor, providing the means to manipulate
-a program through various operations. These include cursor movement, substitution
-and conditional expressions.
 
 \subsubsection{Cursor movement}
-The general form of reduction rule for substitution is given in \cref{fig:red-rules-movement}
+Cursor movement is a fundamental operation, allowing the editor to move the cursor
+to a different position, changing the target of editor expressions. This is defined
+as two operations in the editor calculus\cite{aalborg} in the form of
+\texttt{Child-i} and \texttt{Parent} operations (\cref{fig:red-rules-movement}).
+
 
 \subsubsection{Substitution}
-Substitution operations
+Substitution allow for replacing the abt encapsulated by the cursor with another
+abt of the same sort, ensuring that well-formedness is maintained.
+This is defined as the \texttt{Insert-op} operation in the editor calculus\cite{aalborg}
+(\cref{fig:red-rules-sub}).
 
 \subsubsection{Conditional expressions}
 Conditional expressions provide a way to perform different operations based on
-. These expressions evaluate conditions and execute corresponding editor actions
-if the conditions are met.
+modal logic of the encapsulated abt, such as the $@o$ operator which holds
+if the cursor is encapsulating the operator $o$. This is defined as \texttt{At-op}
+along \texttt{Necessity}, \texttt{Possibly-i} and \texttt{Possibly-i} operators
+in the editor calculus\cite{aalborg} (\cref{fig:sat-rel-modal-ops}). Conditionals
+can be connected with logical operators, forming the operators \texttt{Negation},
+\texttt{Conjunction}, \texttt{Disjunction-1} and \texttt{Disjunction-2}
+(\cref{fig:sat-rel-prop-connectives}).
 
+
+
+
+
+\subsubsection{Making the functionality generic}
+% TODO: write a smooth transition
+
+For example, consider the cursor substitution operator (\cref{fig:red-rules-sub}),
+where the editor calculus enforces that operators can only be substituted
+with operators of same sort. Initially, a straightforward approach involves
+having a substitution function for each sort $s \in \mathcal{S}$.
+This approach of course leads an implementer to consider generalization,
+i.e. how a single function can take any cursor-encapsulated abt and replace it
+with an operator of the same sort. A solution to this could be
+% % TODO: replace this with a more interesting example, i.e. conditionals
+using type classes, where we might have a type class called \texttt{substitutable}
+and having an instance for each sort.
+Having a typeclass is possible in Haskell (\cref{lst:haskell-typeclass}),
+but typeclasses are not directly supported by Elm.
+They can however be simulated with Elm records, as shown in the "typeclasses"
+Elm package\cite{elm-typeclass-package}.
+An example of such a simulation is shown in \cref{lst:elm-typeclass}.
+This typeclass simulation in Elm has the disadvantage of forcing an explicit
+reference to the typeclass "instance" in a generic function, in contrast to Haskell.
+This leads to more verbose code and more source code generation.
+
+% TODO: replace this with a more interesting example, i.e. conditionals
+\begin{lstlisting}[language=Haskell,style=inline,caption={Haskell typeclass example},label={lst:haskell-typeclass}]
+-- typeclass
+class Substitutable a where 
+    substitute :: a -> a -> a
+    
+-- instance of typeclass
+instance Substitutable a where
+    substitute _ replacement = replacement
+
+-- example usage
+doIntSub :: Int
+doIntSub = substitute 1 2 
+\end{lstlisting}
+
+
+% TODO: replace this with a more interesting example, i.e. conditionals
+\begin{lstlisting}[language=elm,style=inline,caption={Elm typeclass simulation example},label={lst:elm-typeclass}]
+{-| Simulate a type class
+-}
+type alias Substitutable a =
+    { substitute : a -> a -> a }
+
+{-| Generic instance of the typeclass, we don't need any specific implementation for each type/sort, we just want to assure that the expression and replacement are of the same type. This is constrained by the `substitute` function signature in the (simulated) typeclass.
+-}
+substituteAny : Substitutable a
+substituteAny =
+    { substitute = \_ replacement -> replacement }
+
+{-| Polymorphic function that can be used with any type that has an instance of the `Substitutable` typeclass.
+-}
+substitute : Substitutable a -> a -> a -> a
+substitute substitutable expression replacement =
+    substitutable.substitute expression replacement
+
+{-| Example usage
+-}
+doIntSub : Int
+doIntSub =
+    substitute substituteAny 1 2
+\end{lstlisting}
