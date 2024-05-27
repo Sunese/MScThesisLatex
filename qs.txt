@@ -1,2 +1,4 @@
 - Hvordan kan jeg referere til KU bachelor projektet?
-- 
+- Skal jeg inkludere problemformulering et sted?
+- Lige nu har jeg anonymous på aalborg referencen, skal/kan den opdateres til
+    noget andet?

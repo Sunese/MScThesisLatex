@@ -134,14 +134,36 @@ The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BN
   Notably, a binder is used in the $insert$ operator, where the alias of $id_1$, specified as $id_2$ is bound within the sub-query.
 \end{example}
 
-To make the specification language parseable, a more computer-friendly format is presented in figure \cref{fig:spec-lang-bnf}. Every syntactic category is expected on its own line, followed by a blank line and all derivations. Each derivation is expected to be a syntactic category, followed by '::=' and every term (which acts as the concrete syntax of an operator), arity and operator name, separated with a vertical bar '|'. Every term, arity and operator are separated with a number-sign '\#'. See figure \cref{fig:sql-lang-parseable} for an example.
+To make the specification language parseable, a more computer-friendly format is
+presented in \cref{lst:spec-lang-bnf} in BNF-form. Every syntactic category is
+expected on its own line, followed by a blank line and all derivations.
+Each derivation is expected to be a syntactic category, followed by '::=' and
+every term (which acts as the concrete syntax of an operator), arity and operator
+name, separated with a vertical bar '|'. Every term, arity and operator are separated
+with a number-sign '\#'. See figure \cref{fig:sql-lang-parseable} for an example.
 
-\begin{myfigure}{Specification language in BNF notation}{fig:spec-lang-bnf}
+\begin{lstlisting}[style=inline,caption=BNF-form of the specificaiton language,label=lst:spec-lang-bnf]
+<syntax> ::= <synCatList> "\n\n" <synCatRulesList>
 
-\end{myfigure}
+<synCatList> ::= <synCat> "\n" <synCatList> | <synCat>
+<synCat> ::= <synCatName> "in" <synCatType>
+
+<synCatName> ::= %string
+<synCatType> ::= %string
+
+<synCatRulesList> ::= <synCatRules> "\n" <synCatRulesList> | <synCatRules>
+<synCatRules> ::= <synCatName> "::=" <ruleList>
+<ruleList> ::= <rule> "\n" <ruleList> | <rule>
+
+<rule> ::= <term> "#" <arity> "#" <operator>
+<term> ::= %string
+<arity> ::= "(" <arityElement> ")" | "(" <arityElement> "," <arity> ")"
+<arityElement> ::= <synCatName> | %string
+<operator> ::= %string
+\end{lstlisting}
 
 \begin{myfigure}{Subset of syntax of a small SQL language in a parseable format}{fig:sql-lang-parseable}
-  \begin{lstlisting}[backgroundcolor=\color{myfigurecolorback}]
+  \begin{lstlisting}[style=figurestyle]
 query in Query
 cmd in Command
 id in Id
@@ -174,7 +196,7 @@ behavior after the updates.
 
 \begin{example}{Algebraic data types for a small C syntax}{ex:c-alg-data-types}
   Given example \cref{ex:c-spec}, one can generate the following custom types in Elm:
-  \begin{lstlisting}
+  \begin{lstlisting}[style=examplestyle]
 type alias Bind a b =
     ( List a, b )
 type Prog
@@ -230,7 +252,7 @@ type Id
 
 In contrast, a generic solution without the need for generating new source reduces the risk of syntax errors in the target language for the editor itself. A generic solution involves designing a model capable of holding the necessary information from any syntax. An approach for this is provided in \cref{lst:elm-ex}. However, this approach requires additional well-formedness checks on any given term concerning the syntax.
 
-\begin{lstlisting}[backgroundcolor=\color{myfigurecolorback},caption={Elm Records for storing syntax information},label={lst:elm-ex}]
+\begin{lstlisting}[style=inline,caption={Elm Records for storing syntax information},label={lst:elm-ex}]
 type alias Syntax =
 { synCats : [String]
 , operators : [Operator]
@@ -458,6 +480,7 @@ For example, consider a small tree created from the syntax given in
 example \cref{ex:as-sql-lang} (including cursor and hole operators) and
 their two possible decompositions in figure \cref{fig:sql-decomp-ex}.
 
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{img/slq-decompose-ex.drawio.png}
@@ -484,6 +507,14 @@ into following sub-tasks:
         based on the rest of the tree that was not traversed
         when generating the cursor context
 \end{itemize}
+
+This way of decomposing an abt always places the cursor at the root of the
+well-formed tree. This makes it impossible for the cursor to encapsulate the immediate
+child of the root, making the property 3 in the definition of well-formed trees
+(\cref{def:well-formed-trees}) redundant. For this reason, the code generation
+has been revised to only generate an operator of arity $(\hat{s})\dot{s}$ (property 4),
+representing that the cursor only encapsulates the root of a cursorless abt
+of sort $\hat{s}$.
 
 The following will explain in more details how the steps above can be done,
 and how we always get a unique decomposition, as long as the abt to be decomposed is well-formed.
@@ -729,8 +760,6 @@ consumeCursor op =
     _ -> op
 \end{lstlisting}
 
-
-
 Like when generating functions supporting cursor context, a very similar approach
 is taken here, and can be seen in listing \cref{lst:to-wf-fun-gen}.
 
@@ -781,29 +810,262 @@ The cursor context and well-formed tree pair as defined above will decompose
 any well-formed abt into a unique pair of a cursor context and a well-formed tree.
 
 
-\subsubsection{Cursor movement}
+\subsubsection{Cursor movement - Child}
 Cursor movement is a fundamental operation, allowing the editor to move the cursor
 to a different position, changing the target of editor expressions. This is defined
-as two operations in the editor calculus\cite{aalborg} in the form of
+as two operations in the editor calculus in the form of
 \texttt{Child-i} and \texttt{Parent} operations (\cref{fig:red-rules-movement}).
 
 For moving to child $i$ of an operator, a \texttt{child} function is generated
-which takes an integer $i$ and a decomposed tuple of a cursor context and well-formed
-tree. It returns a new tuple, where the context hole in the cursor context has been 
-replaced with the operator of sort $\mathcal{S}^C$ corresponding to the cursorless
+which takes an integer $i$ and a decomposed tree represented by a tuple of a cursor
+context and well-formed tree. It returns a new tuple, where the context hole in
+the cursor context has been replaced with the operator of sort $\mathcal{S}^C$ corresponding to the cursorless
 operator of sort $\hat{\mathcal{S}}$ under the cursor in the well-formed tree before
-moving the cursor. The integer $i$ determines which argument of the cursor context 
-operator contains the new context hole. The new well-formed tree is built by 
-wrapping the $i$ argument of the cursorless operator current root operator 
-in the well-formed tree. 
+moving the cursor. The integer $i$ determines which argument of the cursor context
+operator contains the new context hole. The new well-formed tree is built by
+wrapping the $i$th argument of the cursorless operator current root operator
+in the well-formed tree.
 
-For a visualization of this, see \cref{fig:cursor-movement-drawing}.
+For moving to the parent of the cursor, a \texttt{parent} function is generated
+which takes a decomposed tree and returns a new decomposed tree where the cursor
+
+For a visualization of this, see \cref{fig:movement-example} showing the result
+of applying various \texttt{child} operations to a decomposed tree.
+Pseudocode explaining the overall algorithm is provided in
+\cref{lst:cursor-movement-pseudocode}.
 
 \begin{figure}[H]
-  \includegraphics[width=\textwidth]{img/slq-decompose-ex.drawio.png}
-  \caption{TODO}
-  \label{fig:cursor-movement-drawing}
+  \centering
+  \begin{subfigure}[b]{0.65\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/slq-decomp-only.drawio.png}
+    \caption{Decomposition of a small SQL program}
+    \label{subfig:decomp-only}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.65\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/sql-child1.drawio.png}
+    \caption{Applying the \texttt{Child-1} operation}
+    \label{subfig:child1}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[b]{0.65\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{img/sql-child2.drawio.png}
+    \caption{Applying the \texttt{Child-2} operation}
+    \label{subfig:child2}
+  \end{subfigure}
+  \caption{Example of cursor movement}
+  \label{fig:movement-example}
 \end{figure}
+
+
+\begin{lstlisting}[style=inline,caption={Pseudocode for applying child operator},label={lst:cursor-movement-pseudocode}]
+child(i, (cctx, wellformed)) =
+  case wellformed of
+    Root_Sort1 underCursor ->
+      case underCursor.arity of
+        0 -> error "operator has no children"
+        1 -> 
+            case i of
+              1 -> 
+                (replaceCCtxHole cctx i underCursor
+                  -- X: sort of child
+                , Root_SortX underCursor.args[1])
+              _ -> error "Invalid child"
+        2 ->
+            case i of
+              1 -> 
+                (replaceCCtxHole cctx i underCursor
+                , Root_SortX underCursor.args[1])
+              2 -> 
+                (replaceCCtxHole cctx i underCursor
+                , Root_SortX underCursor.args[2])
+              _ -> error "Invalid child"
+        ...
+    Root_ClessOp2 ->
+      ...
+
+replaceCCtxHole cctx i underCursor =
+  case cctx of
+    CCtxHole ->
+      case underCursor arg1 arg2 ... argn of
+        Root_Sort1 _ -> 
+          case i of
+            1 -> CCtx1_Sort1 CctxHole ... argn
+            2 -> CCtx2_Sort1 arg1 CctxHole ... argn
+            ...  
+        Root_Sort2 _ _ ->
+          case i of
+            1 -> CCtx1_Sort2 CctxHole ... argn
+            2 -> CCtx2_Sort2 arg1 CctxHole ... argn
+            ...
+        ...
+    CCtxOp1 arg1 .. argn ->
+      CCtxOp1 
+        (replaceCCtxHole arg1 i underCursor) 
+        ... 
+        argn
+    CCtxOp2 args ->
+      CCtxOp2 
+        arg1 
+        (replaceCCtxHole arg2 i underCursor) 
+        ... 
+        argn
+    ...
+\end{lstlisting}
+
+This has been implemented by generating a \texttt{child} function which
+takes an integer $i$ and a decomposed tree, and returns a new cursor context
+and well-formed tree pair.
+
+\begin{example}{Generated child function}{ex:child-fun}
+  Following is an excerpt of the generated \texttt{child} function
+  for the small C language:
+  \begin{lstlisting}[language=elm,style=inline,backgroundcolor=\color{myexamplecolorback}]
+  child : Int -> 
+          ( Cctx, Wellformed ) -> 
+          Maybe ( Cctx, Wellformed )
+  child i decomposed =
+      let
+          ( cctx, wellformed ) =
+              decomposed
+      in
+      case wellformed of
+          Root_p_CLess underCursor ->
+              case underCursor of
+                  Program_CLess arg1 ->
+                      case i of
+                          1 ->
+                              Just
+                                  ( replaceCctxHole 
+                                      i 
+                                      cctx 
+                                      (P_CLess 
+                                        underCursor)
+                                  , Root_fd_CLess 
+                                      arg1
+                                  )
+  
+                          _ ->
+                              Nothing
+  
+                  Hole_p_CLess ->
+                      Nothing
+  
+          Root_s_CLess underCursor ->
+              case underCursor of
+                  Assignment_CLess arg1 arg2 ->
+                      case i of
+                          1 ->
+                              Just
+                                  ( replaceCctxHole 
+                                      i 
+                                      cctx 
+                                      (S_CLess 
+                                        underCursor)
+                                  , Root_id_CLess 
+                                      arg1
+                                  )
+  
+                          2 ->
+                              Just
+                                  ( replaceCctxHole 
+                                      i 
+                                      cctx 
+                                      (S_CLess 
+                                        underCursor)
+                                  , Root_e_CLess 
+                                      arg2
+                                  )
+  
+                          _ ->
+                              Nothing
+\end{lstlisting}
+\end{example}
+
+\subsubsection{Cursor movement - Parent}
+
+Moving the cursor to the parent of the cursor is done by first updating the cursor context
+by moving the context hole a level up, such that the parent of the context hole
+becomes the new context hole. Then, the parent of the cursor context which has
+been updated (operator of sort $\mathcal{S}^C$) is inserted as its equivalent
+well-formed operator (operator of sort $\dot{\mathcal{S}}$) at the root of the
+well-formed tree.
+
+To visualize this, consider the example already given for the \texttt{child} operations, but where applying the \texttt{Parent} operation to the tree in \cref{subfig:child2} would result in the tree in \cref{subfig:decomp-only}.
+
+The pseudocode for this operation is shown in
+\cref{lst:cursor-movement-parent-pseudocode}.
+In this pseudocode, the \texttt{parent} function first updates the cursor
+context by calling the \texttt{moveCCtxHoleUp} function, which moves the
+context hole one level up in the cursor context tree.
+The \texttt{moveCCtxHoleUp} function recursively traverses the cursor
+context based on the cursor context hole's path. When the path contains
+two elements, we are one level above the cursor context hole's parent, which
+is then replaced with the new context hole (line 11-14).
+
+When the path contains only one element, the cursor context hole is an immediate child of the root, and in that case it can be replaced directly
+with the new context hole (line 15).
+
+If the path contains more than two elements, the function recurses further
+down the cursor context tree, until the grand-parent of the cursor context hole
+is reached (line 16-28).
+
+Next, the insertAsRoot function is called to insert the removed context as the
+new root of the well-formed tree. This function adds the prior root of the
+well-formed tree as an argument to the removed cursor context's equivalent
+well-formed operator, which is then placed at the root of the well-formed tree.
+The checks being performed in the \texttt{insertAsRoot} function ensure that the
+insertion is well-formed, i.e. ensuring that if an operator of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ was removed from the cursor context, the root of the well-formed tree must be an operator of sort $(\vec{\hat{s}}_i.\hat{s}_i)\dot{s}$.
+
+\begin{lstlisting}[style=inline,caption={Pseudocode for applying parent operator},label={lst:cursor-movement-parent-pseudocode}]
+parent((cctx, wellformed)) =
+  let (newCCtx, removed) = moveCCtxHoleUp holepath cctx
+  let newWellformed = insertAsRoot removed wellformed
+  in
+    (newCCtx, newWellformed)
+
+moveCCtxHoleUp holepath cctx =
+  case holepath of
+    [_,_] -> case cctx of
+              CCtxHole -> error "invalid path"
+              CCtxOp1 arg1 ... argn -> 
+                ((CCtxOp1 CCtxHole ... argn), arg1)
+              CCtxOp2 arg1 arg2 ... argn -> 
+                ((CCtxOp2 arg1 CCtxHole ... argn), arg2)
+    [_] -> (CCtxHole, cctx)
+    _ : restpath -> case cctx of
+                  CCtxOp1 arg1 ... argn ->
+                    let (newCCtx, removed) = 
+                        moveCCtxHoleUp restpath arg1
+                    in
+                      ((CCtxOp1 newCCtx ... argn)
+                      , removed)
+                  CCtxOp2 arg1 arg2 ... argn ->
+                    let (newCCtx, removed) = 
+                        moveCCtxHoleUp restpath arg2
+                    in
+                      ((CCtxOp2 arg1 newCCtx ... argn)
+                      , removed)
+    [] -> error "empty path" 
+
+insertAsRoot removed wellformed =
+  case removed of
+    CCtxHole -> error "invalid cctx"
+    CCtxOp1_SortY arg1_SortX ... argn -> 
+      case wellformed of
+        Root_SortX underCursor ->
+          Root_SortY (CLessOp_SortY underCursor)
+        _ -> error "not wellformed"
+    CCtxOp2_SortY arg1 arg2_SortX ... argn ->
+      case wellformed of
+        Root_SortX underCursor ->
+          Root_SortY (CLessOp_SortY underCursor)
+        _ -> error "not wellformed"
+    ...
+\end{lstlisting}
 
 \subsubsection{Substitution}
 Substitution allow for replacing the abt encapsulated by the cursor with another
@@ -811,9 +1073,10 @@ abt of the same sort, ensuring that well-formedness is maintained.
 This is defined as the \texttt{Insert-op} operation in the editor calculus
 (\cref{fig:red-rules-sub}).
 
-For this a \texttt{substitution} function is generated 
+For this a \texttt{substitution} function is generated
 
-\subsubsection{Conditional expressions}
+\subsubsection{Conditional expressions, Sequence, Recursion and Context}
+
 Conditional expressions provide a way to perform different operations based on
 modal logic of the encapsulated abt, such as the $@o$ operator which holds
 if the cursor is encapsulating the operator $o$. This is defined as \texttt{At-op}
@@ -823,9 +1086,13 @@ can be connected with logical operators, forming the operators \texttt{Negation}
 \texttt{Conjunction}, \texttt{Disjunction-1} and \texttt{Disjunction-2}
 (\cref{fig:sat-rel-prop-connectives}).
 
+Unfortunately, this project has not yet implemented conditional expressions,
+but it is entirely possible by generating functions for each of the
+conditional operators, which would take a decomposed tree and return a boolean
+value based on the modal logic of the encapsulated abt.
 
-
-
+Like conditional expressions, sequence, recursion and context operators
+have not been implemented in this project.
 
 \subsubsection{Making the functionality generic}
 % TODO: write a smooth transition
@@ -851,15 +1118,12 @@ This leads to more verbose code and more source code generation.
 
 % TODO: replace this with a more interesting example, i.e. conditionals
 \begin{lstlisting}[language=Haskell,style=inline,caption={Haskell typeclass example},label={lst:haskell-typeclass}]
--- typeclass
 class Substitutable a where 
     substitute :: a -> a -> a
     
--- instance of typeclass
 instance Substitutable a where
     substitute _ replacement = replacement
 
--- example usage
 doIntSub :: Int
 doIntSub = substitute 1 2 
 \end{lstlisting}
@@ -867,25 +1131,17 @@ doIntSub = substitute 1 2
 
 % TODO: replace this with a more interesting example, i.e. conditionals
 \begin{lstlisting}[language=elm,style=inline,caption={Elm typeclass simulation example},label={lst:elm-typeclass}]
-{-| Simulate a type class
--}
 type alias Substitutable a =
     { substitute : a -> a -> a }
 
-{-| Generic instance of the typeclass, we don't need any specific implementation for each type/sort, we just want to assure that the expression and replacement are of the same type. This is constrained by the `substitute` function signature in the (simulated) typeclass.
--}
 substituteAny : Substitutable a
 substituteAny =
     { substitute = \_ replacement -> replacement }
 
-{-| Polymorphic function that can be used with any type that has an instance of the `Substitutable` typeclass.
--}
 substitute : Substitutable a -> a -> a -> a
 substitute substitutable expression replacement =
     substitutable.substitute expression replacement
 
-{-| Example usage
--}
 doIntSub : Int
 doIntSub =
     substitute substituteAny 1 2

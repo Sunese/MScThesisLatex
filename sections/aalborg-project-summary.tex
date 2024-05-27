@@ -100,7 +100,7 @@ The abstract syntax of cursor contexts is given by:
 \begin{enumerate}
     \item The sorts $\mathcal{S}^C = \hat{\mathcal{S}} \cup \{C\}$
     \item The family of operators $\mathcal{O}^C = \hat{\mathcal{O}}$ extended with the $[\cdot]$ operator with arity $()C$
-    \item For every operator $\hat{o} \in \hat{\mathcal{O}}$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)$ and for every $1 \leq i \leq n$ the operator $o_i^C$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)$ to $\mathcal{O}^C$
+    \item For every operator $\hat{o} \in \hat{\mathcal{O}}$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$ and for every $1 \leq i \leq n$ the operator $o_i^C$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ to $\mathcal{O}^C$
     \item The family of variables $\mathcal{X}^C = \hat{\mathcal{X}}$
 \end{enumerate}
 \end{definition}
@@ -160,8 +160,8 @@ Reduction rules for editor expressions are presented in \cref{fig:red-rules-edit
         \text{(Insert-op)} \ \frac{}{[\hat{a}] \stackrel{\{ o \}}{\Rightarrow} [o(\vec{x}_1.\hole_{s_1};...;\vec{x}_n.\hole_{s_n})]} \hat{a} \in \mathcal{B}[\mathcal{X}]_s \text{where } s \text{ is the sort of } o
     \]
 \end{myfigure}
-
 \begin{myfigure}{Reduction rules for cursor movement}{fig:red-rules-movement}
+
     \[
         \text{(Child-i)} \ \frac{}{[\hat{o}(\vec{x}_1.\hat{a}_1;...;\vec{x}_n.\hat{a}_n)] \stackrel{child \ i}{\Rightarrow} o(\vec{x}_1.\hat{a}_1;...;\vec{x}_i.[\hat{a}_i];...;\vec{x}_n.\hat{a}_n)}
     \]

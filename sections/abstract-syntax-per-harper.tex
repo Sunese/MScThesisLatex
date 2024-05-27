@@ -1,5 +1,7 @@
 
-\section{Abstract Syntax Trees}
+\section{Abstract Syntax}
+
+\subsection{Abstract Syntax Trees}
 An abstract syntax tree (ast for short) is an ordered tree describing the syntactical structure of a program.
 
 Harper introduces the notion of sorts $s \in \mathcal{S}$, arity-indexed families $\mathcal{O}$ of disjoint sets of operators $\mathcal{O}_\alpha$ of arity $\alpha$ and sort-indexed families $\mathcal{X}$ of disjoint finite sets $\mathcal{X}_s$ of variables $x$ of sort $s$.
@@ -25,7 +27,7 @@ The family $\mathcal{A}[\mathcal{X}] = \{ \mathcal{A}[\mathcal{X}]_s \}_{s \in \
     \item Operators combine asts: if $o$ is an operator of arity $(s_1,...,s_n)s$, and if $a_1 \in \mathcal{A}[\mathcal{X}]_{s_1},...,a_n \in \mathcal{A}[\mathcal{X}]_{s_n}$, then $o(a_1;...;a_n) \in \mathcal{A}[\mathcal{X}]_s$
 \end{enumerate}
 
-\section{Abstract Binding Trees}
+\subsection{Abstract Binding Trees}
 An abstract binding tree (abt for short) is an enriched ast with bindings, allowing identifiers to be bound within a scope.
 
 Operators in an abt can bind any finite number (possibly zero) of variables in each argument with form $x_1,...,x_k.a$ where variables $x_1,...,x_k$ are bound within the abt $a$. A finite sequence of bound variables $x_1,...,x_k$ is represented as $\vec{x}$ for short.

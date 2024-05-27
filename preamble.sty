@@ -20,6 +20,8 @@
 \usepackage{stmaryrd}
 \usepackage{fancyhdr}
 \usepackage{lastpage}
+\usepackage{caption}
+\usepackage{subcaption}
 
 \usepackage{import}
 
@@ -129,22 +131,46 @@
     extendedchars=true, % Allows 256 instead of 128 ASCII characters
     tabsize=2, % Number of spaces indented when discovering a tab 
     columns=fixed, % Make all characters equal width
+    keepspaces=false, % Does not ignore spaces to fit width, convert tabs to spaces
+    breaklines=false, % Wrap lines if they don't fit
+    showstringspaces=false, % Lets spaces in strings appear as real spaces
+    mathescape=true, % Enable math escape
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    stringstyle=\color{codepurple},
+    backgroundcolor=\color{myinlinecolorback},
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{codegray},
+    % xleftmargin=2em,
+    frameround=tttt,
+    % framexleftmargin=1.5em
+    language=elm
+}
+
+\lstdefinestyle{figurestyle}{
+    basicstyle=\small\ttfamily, % Global Code Style
+    captionpos=b, % Position of the Caption (t for top, b for bottom)
+    extendedchars=true, % Allows 256 instead of 128 ASCII characters
+    tabsize=2, % Number of spaces indented when discovering a tab 
+    columns=fixed, % Make all characters equal width
     keepspaces=true, % Does not ignore spaces to fit width, convert tabs to spaces
     breaklines=true, % Wrap lines if they don't fit
     showstringspaces=false, % Lets spaces in strings appear as real spaces
     mathescape=true, % Enable math escape
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
-    numberstyle=\tiny\color{codegray},
     stringstyle=\color{codepurple},
-    backgroundcolor=\color{myinlinecolorback},
+    backgroundcolor=\color{myfigurecolorback},
+    numberstyle=\tiny\color{codegray},
+    frame=single,
+    numbers=left,
+    % xleftmargin=2em,
+    frameround=tttt,
+    % framexleftmargin=1.5em
 }
 
-\definecolor{elm-orange}{RGB}{240,173,0}
-\definecolor{elm-gray}{RGB}{149,149,138}
-\definecolor{elm-blue}{RGB}{0,168,198}
-
-\lstdefinestyle{mystyle}{
+\lstdefinestyle{examplestyle}{
     backgroundcolor=\color{myexamplecolorback},
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
@@ -154,13 +180,12 @@
     breakatwhitespace=false,
     breaklines=true,
     captionpos=b,
-    keepspaces=true,
+    tabsize=2,
+    frame=single,
     numbers=left,
-    numbersep=5pt,
-    showspaces=false,
-    showstringspaces=false,
-    showtabs=false,
-    tabsize=2
+    % xleftmargin=2em,
+    frameround=tttt,
+    % framexleftmargin=1.5em
 }
 
 \newcommand{\mybox}[3]{\begin{center}
@@ -175,6 +200,6 @@
 \newcommand{\enc}[1]{\llbracket #1 \rrbracket}
 \newcommand{\conf}[2]{\langle #1,#2 \rangle}
 
-\lstset{style=mystyle}
+\lstset{style=inline}
 
 \setlength{\parindent}{0pt} % No indentation
