@@ -612,7 +612,7 @@ See \cref{lst:cursor-ctx-pseudocode} for pseudocode demonstrating this process.
 \begin{lstlisting}[caption={Pseudocode for generating cursor context}
   ,label={lst:cursor-ctx-pseudocode}
   ,style=inline
-  ,float]
+  ]
 toCCtx op path =
   case path of
     [] -> (context_hole, op)
@@ -662,7 +662,7 @@ the algorithm described above is implemented for every sort.
     ,style=inline
     ,caption={toCCtx function generator}
     ,label={lst:to-cc-fun-gen}
-    ,float]
+    ]
 createToCCtxFuns : Syntax -> List Elm.Declaration
 createToCCtxFuns syntax =
   List.map createToCCtxFun syntax.synCatOps ++ 
@@ -738,7 +738,7 @@ is taken here, and can be seen in listing \cref{lst:to-wf-fun-gen}.
     ,style=inline
     ,caption={toWellFormed function generator}
     ,label={lst:to-wf-fun-gen}
-    ,float]
+    ]
 createToWellFormedFun : Syntax -> Elm.Declaration
 createToWellFormedFun syntax =
   Elm.declaration "toWellformed" <|
@@ -787,12 +787,31 @@ to a different position, changing the target of editor expressions. This is defi
 as two operations in the editor calculus\cite{aalborg} in the form of
 \texttt{Child-i} and \texttt{Parent} operations (\cref{fig:red-rules-movement}).
 
+For moving to child $i$ of an operator, a \texttt{child} function is generated
+which takes an integer $i$ and a decomposed tuple of a cursor context and well-formed
+tree. It returns a new tuple, where the context hole in the cursor context has been 
+replaced with the operator of sort $\mathcal{S}^C$ corresponding to the cursorless
+operator of sort $\hat{\mathcal{S}}$ under the cursor in the well-formed tree before
+moving the cursor. The integer $i$ determines which argument of the cursor context 
+operator contains the new context hole. The new well-formed tree is built by 
+wrapping the $i$ argument of the cursorless operator current root operator 
+in the well-formed tree. 
+
+For a visualization of this, see \cref{fig:cursor-movement-drawing}.
+
+\begin{figure}[H]
+  \includegraphics[width=\textwidth]{img/slq-decompose-ex.drawio.png}
+  \caption{TODO}
+  \label{fig:cursor-movement-drawing}
+\end{figure}
 
 \subsubsection{Substitution}
 Substitution allow for replacing the abt encapsulated by the cursor with another
 abt of the same sort, ensuring that well-formedness is maintained.
-This is defined as the \texttt{Insert-op} operation in the editor calculus\cite{aalborg}
+This is defined as the \texttt{Insert-op} operation in the editor calculus
 (\cref{fig:red-rules-sub}).
+
+For this a \texttt{substitution} function is generated 
 
 \subsubsection{Conditional expressions}
 Conditional expressions provide a way to perform different operations based on
