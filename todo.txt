@@ -1,11 +1,13 @@
 needs writing (prioritized):
-
-    - write about only APCs (cursor movement and subst.) being implemented
-        both in implementation and conclusion
-
+    - write about substitution:
+        - algorithm
+        - pseudocode
+        - generated functions
     - refine example languages (make them prettier)
     - make example for latex
     - editor examples
-    - conclusion
+    - write about binders can only be same type
+    - re-read conclusion
+    - re-read impl. section on conditional, seq. etc.
     - replace typeclass example with a more interesting one
     

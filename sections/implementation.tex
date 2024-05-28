@@ -45,50 +45,56 @@ The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BN
   Following is a specification of a subset of the C language\cite{c-iso-standard}, per the described specification language.
   \[
     \begin{aligned}
-       & \textit{p}         \in \textit{Prog}           \quad & \textit{s}           \in \textit{Stmt}      \\
-       & \textit{vd}        \in \textit{VariableDecl}   \quad & \textit{fd}        \in \textit{FunDecl}     \\
-       & \textit{t}         \in \textit{Type}           \quad & \textit{id}          \in \textit{Id}        \\
-       & \textit{e}         \in \textit{Exp}            \quad & \textit{b}           \in \textit{Block}     \\
-       & \textit{fa}        \in \textit{Funarg}         \quad & \textit{cond}      \in \textit{Conditional} \\
-       & \textit{int}       \in \textit{Int}            \quad & \textit{char}        \in \textit{Char}      \\
-       & \textit{bool}       \in \textit{Bool}          \quad & \textit{string}        \in \textit{String}  \\
-    \end{aligned}
+      & \textit{p}       \in \textit{Prog}       \quad & \textit{b}       \in \textit{Block}        \\
+      & \textit{bi}      \in \textit{BlockItem}  \quad & \textit{vd}      \in \textit{VarDecl}      \\
+      & \textit{fd}      \in \textit{FunDecl}    \quad & \textit{s}       \in \textit{Stmt}         \\
+      & \textit{pl}      \in \textit{ParamList}  \quad & \textit{e}       \in \textit{Exp}          \\
+      & \textit{t}       \in \textit{Type}       \quad & \textit{id}      \in \textit{Id}           \\
+      & \textit{int}     \in \textit{Int}        \quad & \textit{char}    \in \textit{Char}         \\
+      & \textit{bool}    \in \textit{Bool}       \quad & \textit{cond}    \in \textit{Cond}         \\
+   \end{aligned}
   \]
+
   \[
     \begin{aligned}
-       & \text{Sort}     &  & \text{Term}                                            &  & \text{Arity}                  &  & \text{Operator}      \\
-       & p ::=           &  & \textit{fd}                                            &  & (fd)p                         &  & program              \\
-       & b ::=           &  & \text{$bi$}                                            &  & (bi)b                         &  & block                \\
-       & bi ::=          &  & \text{$vd$}                                            &  & (vd)bi                        &  & blockdecls           \\
-       & \quad |         &  & \text{$s$}                                             &  & (s)bi                         &  & blockstmts           \\
-       & \quad |         &  & \epsilon                                               &  & ()bi                          &  & blockdone            \\
-       & vd ::=          &  & \text{$t$ $id$ "=" $e$ ";" $bi$}                       &  & (t,e,id.bi)s                  &  & vardecl              \\
-       & \textit{fd} ::= &  & \text{$t_1$ $id_1$ "(" $t_2$ $id_2$ ")"}               &  & (t_1,id_1.fd,                 &  & \textit{fundecl1}    \\
-       &                 &  & \text{"\{" $b$ "\}" \textit{fd}}                       &  & t_2,id_2.b)fd                                           \\
-       & \quad |         &  & \text{$t_1$ $id_1$ "(" $t_2$ $id_2$ ","}               &  & (t_1,id_1.fd,t_2,             &  & \textit{fundecl2}    \\
-       &                 &  & \text{$t_3$ $id_3$ ") \{" $b$ "\}" $\textit{fd}$}      &  & t_3,id_2.id_3.b)\textit{fd}                             \\
-       & \quad |         &  & \text{$\epsilon$}                                      &  & ()fd                          &  & \textit{fundecldone} \\
-       & s ::=           &  & \text{$id$ "=" $e$ ";"}                                &  & (id,e)s                       &  & assignment           \\
-       & \quad |         &  & \text{$id$ "(" \textit{fa} ");"}                       &  & (id,\textit{fa})s             &  & \textit{stmtfuncall} \\
-       & \quad |         &  & \text{"return " $e$ ";"}                               &  & (e)s                          &  & return               \\
-       & \quad |         &  & \text{$cond$}                                          &  & (cond)s                       &  & conditional          \\
-       & \quad |         &  & \text{$s$ $s$}                                         &  & (s,s)s                        &  & compstmt             \\
-       & fa ::=          &  & \text{$t$ $id$}                                        &  & (t,id)\textit{fa}             &  & \textit{funarg}      \\
-       & \quad |         &  & \text{$t$ $id$ "," $fa$}                               &  & (t,id,\textit{fa})\textit{fa} &  & \textit{funargs}     \\
-       & cond ::=        &  & \text{"if (" $e$ ") \{" $b_1$ "\} else \{" $b_2$ "\}"} &  & (e,b_1,b_2)cond               &  & \textit{ifelse}      \\
-       & t ::=           &  & "int"                                                  &  & ()t                           &  & tint                 \\
-       & \quad |         &  & "char"                                                 &  & ()t                           &  & tchar                \\
-       & \quad |         &  & "bool"                                                 &  & ()t                           &  & tbool                \\
-       & e ::=           &  & int                                                    &  & (int)e                        &  & int                  \\
-       & \quad |         &  & char                                                   &  & (char)e                       &  & char                 \\
-       & \quad |         &  & bool                                                   &  & (bool)e                       &  & bool                 \\
-       & \quad |         &  & \text{$e_1$ "+" $e_2$}                                 &  & (e_1,e_2)e                    &  & plus                 \\
-       & \quad |         &  & \text{$e_1$ "==" $e_2$}                                &  & (e_1,e_2)e                    &  & equals               \\
-       & \quad |         &  & \text{$id$ "(" \textit{fa} ")"}                        &  & (id,\textit{fa})e             &  & \textit{expfuncall}  \\
-       & \quad |         &  & \text{$id$}                                            &  & (id)e                         &  & expident             \\
-       & id ::=          &  & \%\text{string}                                        &  & ()id                          &  & ident                \\
-    \end{aligned}
+      & \text{Sort}       &  & \text{Term}                              &  & \text{Arity}                            &  & \text{Operator}            \\
+      & \textit{p} ::=      &  & \textit{b}                                 &  & \textit{(b)p}                             &  & \textit{prog}                \\
+      & \textit{b} ::=      &  & \textit{"\{" bilist "\}" }                   &  & \textit{(bilist)b}                  &  & \textit{block}               \\
+      & \textit{bilist} ::= &  & \textit{bi bilist}                         &  & \textit{(bi, bilist)bilist}               &  & \textit{blockitems}          \\
+      & \quad |             &  & \textit{bi}                                &  & \textit{(bi)bilist}                       &  & \textit{singleblockitem}     \\
+      & \textit{bi} ::=     &  & \textit{vd}                                &  & \textit{(vd)bi}                           &  & \textit{vardecl}             \\
+      & \quad |             &  & \textit{s}                                 &  & \textit{(s)bi}                            &  & \textit{stmt}                \\
+      & \quad |             &  & \textit{fd}                                &  & \textit{(fd)bi}                           &  & \textit{funcdecl}            \\
+      & \textit{vd} ::=     &  & \textit{t id "=" e ";" }                   &  & \textit{(t, id, e)vd}                     &  & \textit{vardecl}             \\
+      & \textit{fd} ::=     &  & \textit{t id "(" pl ")" "\{" b "\}" }        &  & \textit{(t, pl, id.b)fd}                 &  & \textit{funcdecl}            \\
+      & \textit{pl} ::=     &  & \textit{param}                             &  & \textit{(param)pl}                        &  & \textit{paramlist}           \\
+      & \quad |             &  & \textit{param "," pl}                      &  & \textit{(param, pl)pl}                    &  & \textit{params}              \\
+      & \textit{param} ::=  &  & \textit{t id}                              &  & \textit{(t, id)param}                     &  & \textit{param}               \\
+      & \textit{s} ::=      &  & \textit{id "=" e ";"}                      &  & \textit{(id, e)s}                         &  & \textit{assign}              \\
+      & \quad |             &  & \textit{id "(" elist ");"}                 &  & \textit{(id, elist)s}                     &  & \textit{stmtfuncall}         \\
+      & \quad |             &  & \textit{"return " e ";"}                   &  & \textit{(e)s}                             &  & \textit{returnstmt}          \\
+      & \quad |             &  & \textit{cond}                              &  & \textit{(cond)s}                          &  & \textit{condstmt}            \\
+      & \quad |             &  & \textit{b}                                 &  & \textit{(b)s}                             &  & \textit{blockstmt}           \\
+      & \textit{elist} ::=  &  & \textit{e}                                 &  & \textit{(e)elist}                         &  & \textit{arg}                 \\
+      & \quad |             &  & \textit{e "," elist}                       &  & \textit{(e, elist)elist}                  &  & \textit{args}                \\
+      & \textit{cond} ::=   &  & \textit{"if (" e ") \{" b "\} else \{" b "\}"} &  & \textit{(e, b, b)cond}                   &  & \textit{ifelse}              \\
+      & \textit{t} ::=      &  & \textit{"int"}                             &  & \textit{()t}                              &  & \textit{tint}                \\
+      & \quad |             &  & \textit{"char"}                            &  & \textit{()t}                              &  & \textit{tchar}               \\
+      & \quad |             &  & \textit{"bool"}                            &  & \textit{()t}                              &  & \textit{tbool}               \\
+      & \textit{e} ::=      &  & \textit{int}                               &  & \textit{(int)e}                           &  & \textit{intexpr}             \\
+      & \quad |             &  & \textit{char}                              &  & \textit{(char)e}                          &  & \textit{charexpr}            \\
+      & \quad |             &  & \textit{bool}                              &  & \textit{(bool)e}                          &  & \textit{boolexpr}            \\
+      & \quad |             &  & \textit{e "+" e}                           &  & \textit{(e, e)e}                          &  & \textit{plus}                \\
+      & \quad |             &  & \textit{e "==" e}                          &  & \textit{(e, e)e}                          &  & \textit{equals}              \\
+      & \quad |             &  & \textit{id "(" elist ")"}                  &  & \textit{(id, elist)e}                     &  & \textit{expfuncall}          \\
+      & \quad |             &  & \textit{id}                                &  & \textit{(id)e}                            &  & \textit{expident}            \\
+      & \textit{id} ::=     &  & \%\textit{string}                          &  & \textit{()id}                             &  & \textit{ident}               \\
+      & \textit{int} ::=    &  & \%\textit{int}                             &  & \textit{()int}                            &  & \textit{intlit}              \\
+      & \textit{char} ::=   &  & \%\textit{char}                            &  & \textit{()char}                           &  & \textit{charlit}             \\
+      & \textit{bool} ::=   &  & \%\textit{bool}                            &  & \textit{()bool}                           &  & \textit{boollit}             \\
+   \end{aligned}
   \]
+
   '\%int', '\%char', '\%string' and '\%bool' are meta-variables representing any parseable integer, character, sequence of characters and boolean constant by the C language.
 
   This subset is chosen as it can represent a C program consisting of only function declarations at the top level, where one of them might represent a \texttt{main} function, the entry point of a C program. The identifier of a function declaration is bound within the following function declarations (e.g. $id_1$ is bound within $\textit{fd}$ in the $\textit{fundecl1}$ operator).
@@ -151,13 +157,16 @@ with a number-sign '\#'. See figure \cref{fig:sql-lang-parseable} for an example
 <synCatName> ::= %string
 <synCatType> ::= %string
 
-<synCatRulesList> ::= <synCatRules> "\n" <synCatRulesList> | <synCatRules>
+<synCatRulesList> ::= <synCatRules> "\n" 
+                      <synCatRulesList> 
+                    | <synCatRules>
 <synCatRules> ::= <synCatName> "::=" <ruleList>
 <ruleList> ::= <rule> "\n" <ruleList> | <rule>
 
 <rule> ::= <term> "#" <arity> "#" <operator>
 <term> ::= %string
-<arity> ::= "(" <arityElement> ")" | "(" <arityElement> "," <arity> ")"
+<arity> ::= "(" <arityElement> ")" 
+          | "(" <arityElement> "," <arity> ")"
 <arityElement> ::= <synCatName> | %string
 <operator> ::= %string
 \end{lstlisting}
@@ -488,14 +497,8 @@ their two possible decompositions in figure \cref{fig:sql-decomp-ex}.
   \label{fig:sql-decomp-ex}
 \end{figure}
 
-Decomposition should be generic and be possible on a valid abt of any given syntax.
-For this we have a typeclass called \texttt{decomposable} that contains a
-method called \texttt{decompose} which takes a statement made up by the
-operators of sort $\mathcal{S}$, and returns a cursor-context and well-formed-tree pair,
-if decomposition is possible.
-
-In order to instantiate the \texttt{decomposable} type class for any sort,
-it is then necessary to specify how we for any term in any sort,
+In order to generate a decomposition function which works for any sort,
+it is necessary to specify how we for any term in any sort,
 can decompose uniquely into a cursor context and well-formed-tree pair.
 
 Unique decomposition of an abt can be defined algorithmically and divided
@@ -1018,7 +1021,7 @@ new root of the well-formed tree. This function adds the prior root of the
 well-formed tree as an argument to the removed cursor context's equivalent
 well-formed operator, which is then placed at the root of the well-formed tree.
 The checks being performed in the \texttt{insertAsRoot} function ensure that the
-insertion is well-formed, i.e. ensuring that if an operator of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ was removed from the cursor context, the root of the well-formed tree must be an operator of sort $(\vec{\hat{s}}_i.\hat{s}_i)\dot{s}$.
+insertion is well-formed, i.e. it checks that if an operator of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ was removed from the cursor context, the root of the well-formed tree must be an operator of sort $(\vec{\hat{s}}_i.\hat{s}_i)\dot{s}$.
 
 \begin{lstlisting}[style=inline,caption={Pseudocode for applying parent operator},label={lst:cursor-movement-parent-pseudocode}]
 parent((cctx, wellformed)) =
@@ -1072,6 +1075,8 @@ Substitution allow for replacing the abt encapsulated by the cursor with another
 abt of the same sort, ensuring that well-formedness is maintained.
 This is defined as the \texttt{Insert-op} operation in the editor calculus
 (\cref{fig:red-rules-sub}).
+
+In order to implement this, a function needs to 
 
 For this a \texttt{substitution} function is generated
 
