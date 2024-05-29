@@ -201,11 +201,21 @@ child i decomposed =
         ...
 \end{lstlisting}
 
-\begin{lstlisting}[style=inline, caption={Generated functions for substitution for the C language}, label={lst:c-sub}]
-\end{lstlisting}
+An editing session of a sample program within the C language in the Elm
+REPL can be seen in \cref{lst:c-repl}. The sample program consists of a function
+declaration for a function called \texttt{main} which has an input
+parameter called "x". The body of the function consists of two statements,
+an assignment to "x" and a return statement, returning "x".
+The cursor is located at the second child of the \texttt{Assignment} operator, encapsulating a hole.
 
-Consider \cref{lst:c-repl} showing the Elm REPL manipulating a sample program within
-the language.
+Decomposition results in a cursor context of the whole tree, except
+the second child of the \texttt{Assignment\_CLess\_cctx2} operator, which
+contains a cursor context hole. The well-formed tree consists only
+of the hole at the second child of the assignment operator.
+
+Applying the \texttt{parent} function to the decomposed tree results in a 
+new cursor context and well-formed tree pair, where the cursor has been moved 
+to the assignment operator itself, as expected.
 
 \begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of C language editor}, label={lst:c-repl}]
 > example = P <|
