@@ -117,13 +117,13 @@ The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BN
        &             &  & \text{" AS " $id_2$ $query$}    &                                                  \\
        & id ::=      &  & \text{\%string}                 &   & ()id                    &  & id              \\
        & const ::=   &  & \text{\%number}                 &   & ()const                 &  & num             \\
-       & \quad |     &  & \text{"'"\%string"'"}           &   & ()const                 &  & str             \\
+       & \quad |     &  & \text{" '\%string' "}           &   & ()const                 &  & str             \\
        & clause ::=  &  & \text{"WHERE " $cond$}          &   & (cond)clause            &  & where           \\
        & \quad |     &  & \text{"HAVING " $cond$}         &   & (cond)clause            &  & having          \\
-       & cond ::=    &  & \text{$exp_1$ ">" $exp_2$}      &   & (exp_1,exp_2)cond       &  & greater         \\
+       & cond ::=    &  & \text{$exp_1$ "$>$" $exp_2$}    &   & (exp_1,exp_2)cond       &  & greater         \\
        & \quad |     &  & \text{$exp_1$ "=" $exp_2$}      &   & (exp_1,exp_2)cond       &  & equals          \\
-       & exp ::=     &  & \text{$const$}                  &   & ()exp                   &  & econst          \\
-       & \quad |     &  & \text{$id$}                     &   & ()exp                   &  & eid             \\
+       & exp ::=     &  & \text{$const$}                  &   & (const)exp              &  & econst          \\
+       & \quad |     &  & \text{$id$}                     &   & (id)exp                 &  & eident          \\
     \end{aligned}
   \]
   where '\%string' and '\%number' and '\%char' are placeholders for any parsable sequence of characters and numbers by the PostgreSQL language.
@@ -137,13 +137,36 @@ The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BN
   Below is the syntax of a subset of the \LaTeX language:
   \[
     \begin{aligned}
+       & \textit{d} \in \textit{Document}    \quad & \textit{e} \in \textit{Environment} \\
+       & \textit{cmd} \in \textit{Command}   \quad & \textit{a} \in \textit{Argument}    \\
+       & \textit{id} \in \textit{Identifier} \quad & \textit{c} \in \textit{Content}     \\
     \end{aligned}
   \]
   \\
   \[
     \begin{aligned}
+       & \text{Sort} &  & \text{Term}                             &  & \text{Arity}   &  & \text{Operator}     \\
+       & d ::=       &  & \text{"\bs documentclass\{" $id$ "\}"}  &  & (id,a,a,id.c)d &  & document            \\
+       &             &  & \text{"\bs newenvironment\{" $id$ "\}"} &  &                &  &                     \\
+       &             &  & \text{$a_1$} \textit{$a_2$}             &  &                &  &                     \\
+       &             &  & \text{"\bs begin\{document\}" $c$}      &  &                &  &                     \\
+       &             &  & \text{"\bs end\{document\}"}            &  &                &  &                     \\
+       & id ::=      &  & \text{\%string}                         &  & ()id           &  & ident[String]       \\
+       & e ::=       &  & \text{"\bs begin\{" $id$ "\}" $c$}      &  & (id,c,id)e     &  & environment         \\
+       &             &  & \text{ "\bs end\{" $id$ "\}"}           &  &                &  &                     \\
+       & cmd ::=     &  & \text{"\bs " $id$ $a$}                  &  & (id,a)cmd      &  & command             \\
+       & a ::=       &  & \text{"\{" $c$ "\}"}                    &  & (c)a           &  & argument            \\
+       & c ::=       &  & \text{\%text}                           &  & ()c            &  & textContent[String] \\
+       & \quad |     &  & \textit{cmd}                            &  & (cmd)c         &  & cmdContent          \\
+       & \quad |     &  & \textit{e}                              &  & (e)c           &  & envContent          \\
+       & \quad |     &  & \textit{c } \textit{c}                  &  & (c,c)c         &  & seqContent          \\
     \end{aligned}
   \]
+  '\%text' and '\%identifier' are meta-variables representing any parseable text and identifier in the LaTeX language.
+
+  This subset is chosen as it can represent a minimal LaTeX document with an environment
+  definition, where the name of the environment is bound within the body
+  of the document to demonstrate the use of binders in the abstract syntax.
 \end{example}
 
 To make the specification language parseable, a more computer-friendly format is
@@ -487,7 +510,7 @@ a way to specify the starting symbol in the syntax representation.
 
 The generalized editor calculus\cite{aalborg} defines well-formed trees as abt's
 with exactly one cursor either as the root or as an argument of the root.
-However this definition, in conjunction with the cursor context definition,
+However, this definition, in conjunction with the cursor context definition,
 leads to multiple valid decompositions for an abt in certain scenarios,
 which is also mentioned in \cite{aalborg}. This can occur when the cursor is located
 at one of the immediate children of the root. In that case, the cursor context

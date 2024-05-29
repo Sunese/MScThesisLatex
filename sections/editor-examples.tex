@@ -1,16 +1,4 @@
-\section{Editor Examples}
-
-The following section will show from start to finish, how the implementation
-can be used to instantiate a syntax-directed editor for the C language (\cref{ex:c-spec}),
-SQL (\cref{ex:as-sql-lang}) and \LaTeX (\cref{ex:as-latex-lang}).
-
-Each subsection will first show what the computer-friendly and parseable syntax
-for each language looks like, followed by an excerpt of the generated
-source code for the editor instance. Finally, a demonstration of the editor
-in action will be shown using the Elm REPL, where a sample tree built
-from the generated algebraic data types is manipulated with the generated functions.
-
-\subsection{C}
+\section{C}
 
 The syntax for the C language is given in \cref{ex:c-spec}.
 The same syntax, but in a more computer-friendly format is given in \cref{lst:c-bnf}.
@@ -65,9 +53,7 @@ id ::= %string # ()id # ident[String]
 
 When passed the parseable format, the parser will produce the algebraic data types
 given in \cref{lst:c-adts}, alongside relevant functions for cursor movement (\cref{lst:c-movement})
-and substitution (\cref{lst:c-sub}). This makes up in total around 4000 lines of Elm code,
-so only a small excerpt is shown here, but the full example can be found in the source
-code repository.
+and substitution (\cref{lst:c-sub}).
 
 \begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the C language}, label={lst:c-adts}]
 type P
@@ -256,6 +242,287 @@ Just (Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"]
 TODO: substitution example
 \end{lstlisting}
 
-\subsection{SQL}
+\section{SQL}
 
-\subsection{\LaTeX}
+The syntax for the SQL language is given in \cref{ex:as-sql-lang}.
+
+Parseable format for the SQL language is given in \cref{lst:latex-bnf}.
+
+\begin{lstlisting}[style=inline, caption={Parseable format of the SQL language syntax}, label={lst:SQL-bnf}]
+q in Query
+cmd in Command
+id in Id
+const in Const
+clause in Clause
+cond in Condition
+exp in Expression
+
+q ::= \" SELECT \" id_1 \" FROM \" id_2 clause # (id,id,clause)q # select
+cmd ::= \" INSERT INTO \" id_1 \" AS \" id_2 q # (id,id.q)cmd # insert
+id ::= %string # ()id # ident[String]
+const ::= %number # ()const # num[Int] 
+        | \"'\" %string \"'\" # ()const # str[String]
+clause ::= \" WHERE \" cond # (cond)clause # where 
+        | \" HAVING \" cond # (cond)clause # having
+cond ::= exp_1 \">\" exp_2 # (exp,exp)cond # greater 
+        | exp_1 \"=\" exp_2 # (exp,exp)cond # equals
+exp ::= const # (const)exp # econst | id # (id)exp # eident
+\end{lstlisting}
+
+When passed the parseable format, the parser will produce the algebraic data types
+given in \cref{lst:SQL-adts}, alongside relevant functions for cursor movement (\cref{lst:SQL-movement})
+and substitution (\cref{lst:SQL-sub}).
+
+\begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the SQL language}, label={lst:SQL-adts}]
+
+\end{lstlisting}
+
+\begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the SLQ language}, label={lst:SQL-movement}]
+\end{lstlisting}
+
+Sample editing session in the Elm REPL for the generated SQL editor is
+shown in \cref{lst:SQL-repl}.
+
+\begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of the SQL editor}, label={lst:SQL-repl}]
+> example = Q (Select (Ident "col-a") (Ident "table-b") (Where (Greater (Eident (Ident "col-a")) (Econst (Num 2)))))
+Q (Select (Ident "col-a") (Ident "table-b") (Where (Greater (Eident (Ident "col-a")) (Econst (Num 2)))))
+    : Base
+
+> decomposed = decompose example
+(Cctx_hole,Root_q_CLess (Select_CLess (Ident_CLess "col-a") (Ident_CLess "table-b") (Where_CLess (Greater_CLess (Eident_CLess (Ident_CLess "col-a")) (Econst_CLess (Num_CLess 2))))))
+    : ( Cctx, Wellformed )
+
+> new = parent decomposed
+Nothing : Maybe ( Cctx, Wellformed )
+
+> child 1 decomposed
+Just (Select_CLess_cctx1 Cctx_hole (Ident_CLess "table-b") (Where_CLess (Greater_CLess (Eident_CLess (Ident_CLess "col-a")) (Econst_CLess (Num_CLess 2)))),Root_id_CLess (Ident_CLess "col-a"))
+    : Maybe ( Cctx, Wellformed )
+
+> substitute decomposed (Q_CLess Hole_q_CLess)
+Just (Cctx_hole,Root_q_CLess Hole_q_CLess)
+    : Maybe ( Cctx, Wellformed )
+\end{lstlisting}
+
+\section{\LaTeX}
+
+The syntax for the \LaTeX \ language is given in \cref{ex:as-latex-lang}.
+
+Parseable format for the \LaTeX \ language is given in \cref{lst:latex-bnf}.
+
+\begin{lstlisting}[style=inline, caption={Parseable format of \LaTeX \ language syntax}, label={lst:latex-bnf}]
+d in LatexDocument
+e in Environment
+cmd in Command
+a in Argument
+id in Identifier
+c in Content
+
+d ::= \"\\documentclass{\" id_1 \"}
+        \\newenvironment{\" id_2 \"}\" a_1 a_2 
+        \"\\begin{document} \" c \"\\end{document}\" 
+        # (id,a,a,id.b)d 
+        # latexdoc
+id ::= %string # ()id # ident[String]
+e ::= \"\\begin{\" id \"}\" c 
+      \"\\end{\" id \"}\" 
+      # (id,c,id)e 
+      # environment
+cmd ::= \"\\\" id a # (id,a)cmd # command
+a ::= \"{\" c \"}\" # (c)a # argument
+c ::= %string # ()c # textContent[String] 
+    | cmd # (cmd)c # cmdContent 
+    | e # (e)c # envContent 
+    | c c # (c,c)c # seqContent
+    
+    
+\end{lstlisting}
+
+When passed the parseable format, the parser will produce the algebraic data types
+given in \cref{lst:latex-adts}, alongside relevant functions for cursor movement (\cref{lst:latex-movement})
+and substitution (\cref{lst:latex-sub}).
+
+\begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the \LaTeX \ language}, label={lst:latex-adts}]
+type D
+    = Latexdoc Id E A A (Bind Id B)
+    | Hole_d
+    | Cursor_d D
+
+
+type E
+    = Environment Id C Id
+    | Hole_e
+    | Cursor_e E
+
+...
+
+type D_CLess
+    = Latexdoc_CLess Id_CLess E_CLess A_CLess A_CLess (Bind Id_CLess C_CLess)
+    | Hole_d_CLess
+
+
+type E_CLess
+    = Environment_CLess Id_CLess C_CLess Id_CLess
+    | Hole_e_CLess
+
+...
+
+type Cctx
+    = Cctx_hole
+    | Latexdoc_CLess_cctx1 Cctx E_CLess A_CLess A_CLess (Bind Id_CLess B_CLess)
+    | Latexdoc_CLess_cctx2 Id_CLess Cctx A_CLess A_CLess (Bind Id_CLess B_CLess)
+    ...
+
+type Wellformed
+    = Root_d_CLess D_CLess
+    | Root_e_CLess E_CLess
+    | Root_cmd_CLess Cmd_CLess
+    | Root_a_CLess A_CLess
+    | Root_id_CLess Id_CLess
+    | Root_c_CLess C_CLess
+
+\end{lstlisting}
+
+\begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the \LaTeX language}, label={lst:latex-movement}]
+getCursorPath : List Int -> Base -> List Int
+getCursorPath path base =
+    case base of
+        D d ->
+            case d of
+                Latexdoc arg1 arg2 arg3 arg4 ( boundVars5, arg5 ) ->
+                    (((getCursorPath (path ++ [ 1 ]) Id arg1
+                        ++ getCursorPath (path ++ [ 2 ]) (E arg2)
+                        )
+                        ++ getCursorPath (path ++ [ 3 ]) (A arg3)
+                        )
+                        ++ getCursorPath (path ++ [ 4 ]) (A arg4)
+                    )
+                        ++ getCursorPath (path ++ [ 5 ]) (B arg5)
+
+                Hole_d ->
+                    []
+
+                Cursor_d _ ->
+                    path
+        ...
+parent : ( Cctx, Wellformed ) -> Maybe ( Cctx, Wellformed )
+parent decomposed =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case moveCCtxHoleUp cctx (getCctxPath cctx []) of
+        Nothing ->
+            Nothing
+
+        Just ( newCctx, removedCctx ) ->
+            case addParent removedCctx wellformed of
+                Nothing ->
+                    Nothing
+
+                Just newWellformed ->
+                    Just ( newCctx, newWellformed )
+    ...
+
+moveCCtxHoleUp : Cctx -> List Int -> Maybe ( Cctx, Cctx )
+moveCCtxHoleUp cctx path =
+    case path of
+        [ _, _ ] ->
+            case cctx of
+                Cctx_hole ->
+                    Nothing
+
+                Latexdoc_CLess_cctx1 arg1 arg2 arg3 arg4 ( boundVars5, arg5 ) ->
+                    Just
+                        ( Latexdoc_CLess_cctx1
+                            Cctx_hole
+                            arg2
+                            arg3
+                            arg4
+                            ( boundVars5, arg5 )
+                        , arg1
+                        )
+                ...
+
+addParent : Cctx -> Wellformed -> Maybe Wellformed
+addParent cctx wellformed =
+    case cctx of
+        Cctx_hole ->
+            Nothing
+
+        Latexdoc_CLess_cctx1 arg1 arg2 arg3 arg4 ( boundVars5, arg5 ) ->
+            case wellformed of
+                Root_id_CLess underCursor ->
+                    Just
+                        (Root_d_CLess
+                            (Latexdoc_CLess
+                                underCursor
+                                arg2
+                                arg3
+                                arg4
+                                ( boundVars5, arg5 )
+                            )
+                        )
+
+                _ ->
+                    Nothing
+        ...
+
+child : Int -> ( Cctx, Wellformed ) -> Maybe ( Cctx, Wellformed )
+child i decomposed =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case wellformed of
+        Root_d_CLess underCursor ->
+            case underCursor of
+                Latexdoc_CLess arg1 arg2 arg3 arg4 ( boundVars5, arg5 ) ->
+                    case i of
+                        1 ->
+                            Just
+                                ( replaceCctxHole i cctx (D_CLess underCursor)
+                                , Root_id_CLess arg1
+                                )
+                        ...
+
+substitute : ( Cctx, Wellformed ) -> CursorLess -> Maybe ( Cctx, Wellformed )
+substitute decomposed sub =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case wellformed of
+        Root_d_CLess _ ->
+            case sub of
+                D_CLess sub0 ->
+                    Just ( cctx, Root_d_CLess sub0 )
+
+                _ ->
+                    Nothing
+\end{lstlisting}
+
+Sample editing session in the Elm REPL for the generated \LaTeX \ editor is
+shown in \cref{lst:latex-repl}.
+
+\begin{lstlisting}[style=inline, language=elm, caption={Editing sessions with the \LaTeX \ editor in the Elm REPl}, label={lst:latex-repl}]
+> example = D (Latexdoc (Ident "article") Hole_a Hole_a ( [ Ident "myenv" ], Cursor_c (TextContent "Hello World!") ))
+D (Latexdoc (Ident "article") Hole_a Hole_a ([Ident "myenv"],Cursor_c (TextContent ("Hello World!"))))
+    : Base
+
+> decomposed = decompose example
+(Latexdoc_CLess_cctx4 (Ident_CLess "article") Hole_a_CLess Hole_a_CLess ([Ident_CLess "myenv"],Cctx_hole),Root_c_CLess (TextContent_CLess ("Hello World!")))
+    : ( Cctx, Wellformed )
+
+> new = parent decomposed
+Just (Cctx_hole,Root_d_CLess (Latexdoc_CLess (Ident_CLess "article") Hole_a_CLess Hole_a_CLess ([Ident_CLess "myenv"],TextContent_CLess ("Hello World!"))))
+    : Maybe ( Cctx, Wellformed )
+
+> child 1 (Maybe.withDefault (Cctx_hole, Root_d_CLess Hole_d_CLess) new)
+Just (Latexdoc_CLess_cctx1 Cctx_hole Hole_a_CLess Hole_a_CLess ([Ident_CLess "myenv"],TextContent_CLess ("Hello World!")),Root_id_CLess (Ident_CLess "article"))
+    : Maybe ( Cctx, Wellformed )
+
+> substitute decomposed (C_CLess (TextContent_CLess "Updated content"))
+Just (Latexdoc_CLess_cctx4 (Ident_CLess "article") Hole_a_CLess Hole_a_CLess ([Ident_CLess "myenv"],Cctx_hole),Root_c_CLess (TextContent_CLess ("Updated content")))
+    : Maybe ( Cctx, Wellformed )
+\end{lstlisting}

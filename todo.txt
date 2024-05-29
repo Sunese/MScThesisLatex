@@ -1,13 +1,19 @@
 needs writing (prioritized):
-    - refine example languages (make them prettier)
-        - refine C example
-    - make example for latex
+    - write about how it is hard to
+        define an abstract syntax with binders
+        - write about binders can only be same type 
+        - note about how binders' variables are not stored in the model,
+        only the generalized arity is.
     - editor examples
         - write about substitution:
         - algorithm
         - pseudocode
         - generated functions
-    - write about binders can only be same type
     - re-read conclusion
     - re-read impl. section on conditional, seq. etc.
+    - some text for the summaries of gen. editor calculus / harper
+        can be very short.
+        - same for editor examples
+    - make abstract with link to GitHub repo
+    - conclusion: "... has not been implemented at time of writing"
     - replace typeclass example with a more interesting one

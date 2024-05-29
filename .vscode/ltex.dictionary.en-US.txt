@@ -12,3 +12,4 @@ Hüttel
 Godiksen
 cursorless
 Cursorless
+decompositions

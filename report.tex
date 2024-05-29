@@ -1,4 +1,4 @@
-\documentclass[12pt, a4paper]{article}
+\documentclass[12pt, a4paper]{report}
 \usepackage{preamble}
 \usepackage[english, science]{utils/ku-frontpage}
 
@@ -14,26 +14,25 @@
 \thispagestyle{empty}
 \newpage
 
+\thispagestyle{empty}
+\begin{abstract}
+\input{sections/abstract.tex}
+\end{abstract}
+
 \tableofcontents
 \thispagestyle{empty}
 \newpage
 \setcounter{page}{1}
-\linenumbers % TODO: remove before submission
 
-% \input{sections/abstract.tex}
-\input{sections/introduction.tex}
+\input{chapters/Introduction.tex}
 
-\input{sections/prior-work.tex}
+\input{chapters/Background.tex}
 
-\input{sections/abstract-syntax-per-harper.tex}
+\input{chapters/Implementation.tex}
 
-\input{sections/aalborg-project-summary.tex}
+\input{chapters/Examples.tex}
 
-\input{sections/implementation.tex}
-
-\input{sections/editor-examples.tex}
-
-\input{sections/conclusion.tex}
+\input{chapters/Conclusion.tex}
 
 \printbibliography
 
