@@ -1,2 +1,261 @@
 \section{Editor Examples}
-\label{sec:editor-examples}
+
+The following section will show from start to finish, how the implementation
+can be used to instantiate a syntax-directed editor for the C language (\cref{ex:c-spec}),
+SQL (\cref{ex:as-sql-lang}) and \LaTeX (\cref{ex:as-latex-lang}).
+
+Each subsection will first show what the computer-friendly and parseable syntax
+for each language looks like, followed by an excerpt of the generated
+source code for the editor instance. Finally, a demonstration of the editor
+in action will be shown using the Elm REPL, where a sample tree built
+from the generated algebraic data types is manipulated with the generated functions.
+
+\subsection{C}
+
+The syntax for the C language is given in \cref{ex:c-spec}.
+The same syntax, but in a more computer-friendly format is given in \cref{lst:c-bnf}.
+
+\begin{lstlisting}[style=inline, caption={Parseable format of C language syntax}, label={lst:c-bnf}]
+p in Prog
+s in Stmt
+vd in VariableDecl
+fd in FunDecl
+t in Type
+id in Id
+e in Exp
+b in Block
+bi in BlockItem
+fa in Funarg
+cond in Conditional
+
+p ::= fd # (fd)p # program
+b ::= bi # (bi)b # block
+bi ::= vd # (vd)bi # blockdecls 
+    | s # (s)bi # blockstmts 
+    | epsilon # ()bi # blockdone
+vd ::= t id \"=\" e; bi # (t,e,id.bi)vd # vardecl
+fd ::= t_1 id_1 \"(\" t_2 id_2 \")\" \"{\" b \"}\" 
+            # (t,id.fd,t,id.b)fd 
+            # fundecl1 
+    | t_1 id_1 \"(\" t_2 id_2, t_3 id_3 \")\" \"{\" b \"}\" 
+            # (t,id.fd,t,t,id.id.b)fd 
+            # fundecl2 
+    | epsilon # ()fd # fundecldone
+s ::= id \"=\" e \";\" # (id,e)s # assignment 
+    | id \"(\" fa \")\";\" # (id,fa)s # stmtfuncall 
+    | \"return \" e \";\" # (e)s # return 
+    | cond # (cond)s # conditional 
+    | s_1 s_2 # (s,s)s # compstmt
+fa ::= t id # (t,id)fa # funarg 
+    | t id, fa # (t,id,fa)fa # funargs
+cond ::= \"if (\" e \")\" \"{\" b_1 \"} else {\" b_2 \"}\" 
+            # (e,b,b)cond 
+            # ifelse
+t ::= \"int\" # ()t # tint 
+    | \"char\" # ()t # tchar 
+    | \"bool\" # ()t # tbool
+e ::= %int # ()e # int[Int] | %char # ()e # char[Char] 
+    | %bool # ()e # bool[Bool] 
+    | e_1 \"+\" e_2 # (e,e)e # plus 
+    | e_1 \"==\" e_2 # (e,e)e # equals 
+    | id \"(\" fa \")\" # (id,fa)e # expfuncall 
+    | id # (id)e # expident
+id ::= %string # ()id # ident[String]
+\end{lstlisting}
+
+When passed the parseable format, the parser will produce the algebraic data types
+given in \cref{lst:c-adts}, alongside relevant functions for cursor movement (\cref{lst:c-movement})
+and substitution (\cref{lst:c-sub}). This makes up in total around 4000 lines of Elm code,
+so only a small excerpt is shown here, but the full example can be found in the source
+code repository.
+
+\begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the C language}, label={lst:c-adts}]
+type P
+    = Program Fd
+    | Hole_p
+    | Cursor_p P
+
+type S
+    = Assignment Id E
+    | Stmtfuncall Id Fa
+    | Return E
+    | Conditional Cond
+    | Compstmt S S
+    | Hole_s
+    | Cursor_s S
+...
+type P_CLess
+    = Program_CLess Fd_CLess
+    | Hole_p_CLess
+
+
+type S_CLess
+    = Assignment_CLess Id_CLess E_CLess
+    | Stmtfuncall_CLess Id_CLess Fa_CLess
+    | Return_CLess E_CLess
+    | Conditional_CLess Cond_CLess
+    | Compstmt_CLess S_CLess S_CLess
+    | Hole_s_CLess
+...
+type Cctx
+    = Cctx_hole
+    | Program_CLess_cctx1 Cctx
+    | Block_CLess_cctx1 Cctx
+    | Blockdecls_CLess_cctx1 Cctx
+    | Blockstmts_CLess_cctx1 Cctx
+    | Vardecl_CLess_cctx1 Cctx E_CLess (Bind Id_CLess Bi_CLess)
+    | Vardecl_CLess_cctx2 T_CLess Cctx (Bind Id_CLess Bi_CLess)
+    | Vardecl_CLess_cctx3 T_CLess E_CLess (Bind Id_CLess Cctx)
+    ...
+
+type Wellformed
+    = Root_p_CLess P_CLess
+    | Root_s_CLess S_CLess
+    | Root_vd_CLess Vd_CLess
+    | Root_fd_CLess Fd_CLess
+    | Root_t_CLess T_CLess
+    | Root_id_CLess Id_CLess
+    | Root_e_CLess E_CLess
+    | Root_b_CLess B_CLess
+    | Root_bi_CLess Bi_CLess
+    | Root_fa_CLess Fa_CLess
+    | Root_cond_CLess Cond_CLess
+\end{lstlisting}
+
+\begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the C language}, label={lst:c-movement}]
+getCursorPath : List Int -> Base -> List Int
+getCursorPath path base =
+    case base of
+        P p ->
+            case p of
+                Program arg1 ->
+                    getCursorPath (path ++ [ 1 ]) (Fd arg1)
+
+                Hole_p ->
+                    []
+
+                Cursor_p _ ->
+                    path
+
+        B b ->
+            case b of
+                Block arg1 ->
+                    getCursorPath (path ++ [ 1 ]) (Bi arg1)
+
+                Hole_b ->
+                    []
+
+                Cursor_b _ ->
+                    path
+...
+
+
+parent : ( Cctx, Wellformed ) -> Maybe ( Cctx, Wellformed )
+parent decomposed =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case moveCCtxHoleUp cctx (getCctxPath cctx []) of
+        Nothing ->
+            Nothing
+
+        Just ( newCctx, removedCctx ) ->
+            case addParent removedCctx wellformed of
+                Nothing ->
+                    Nothing
+
+                Just newWellformed ->
+                    Just ( newCctx, newWellformed )
+
+...
+
+child : Int -> ( Cctx, Wellformed ) -> Maybe ( Cctx, Wellformed )
+child i decomposed =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case wellformed of
+        Root_p_CLess underCursor ->
+            case underCursor of
+                Program_CLess arg1 ->
+                    case i of
+                        1 ->
+                            Just
+                                ( replaceCctxHole i cctx (P_CLess underCursor)
+                                , Root_fd_CLess arg1
+                                )
+
+                        _ ->
+                            Nothing
+
+                Hole_p_CLess ->
+                    Nothing
+
+        Root_s_CLess underCursor ->
+            case underCursor of
+                Assignment_CLess arg1 arg2 ->
+                    case i of
+                        1 ->
+                            Just
+                                ( replaceCctxHole i cctx (S_CLess underCursor)
+                                , Root_id_CLess arg1
+                                )
+
+                        2 ->
+                            Just
+                                ( replaceCctxHole i cctx (S_CLess underCursor)
+                                , Root_e_CLess arg2
+                                )
+
+                        _ ->
+                            Nothing
+
+        ...
+\end{lstlisting}
+
+\begin{lstlisting}[style=inline, caption={Generated functions for substitution for the C language}, label={lst:c-sub}]
+\end{lstlisting}
+
+Consider \cref{lst:c-repl} showing the Elm REPL manipulating a sample program within
+the language.
+
+\begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of C language editor}, label={lst:c-repl}]
+> example = P <|
+|           Program <|
+|               Fundecl1
+|                   Tint
+|                   ( [ Ident "main" ], Fundecldone )
+|                   Tint
+|                   ( [ Ident "x" ]
+|                   , Block
+|                       (Blockstmts
+|                           (Compstmt
+|                               (Assignment (Ident "x") (Cursor_e Hole_e))
+|                               (Return (Expident (Ident "x")))
+|                           )
+|                       )
+|                   )
+|
+P (Program (Fundecl1 Tint ([Ident "main"],Fundecldone) Tint ([Ident "x"],Block (Blockstmts (Compstmt (Assignment (Ident "x") (Cursor_e Hole_e)) (Return (Expident (Ident "x"))))))))
+    : Base
+
+> decomposed = decompose example
+(Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"],Fundecldone_CLess) Tint_CLess ([Ident_CLess "x"],Block_CLess_cctx1 (Blockstmts_CLess_cctx1 (Compstmt_CLess_cctx1 (Assignment_CLess_cctx2 (Ident_CLess "x") Cctx_hole) (Return_CLess (Expident_CLess (Ident_CLess "x"))))))),Root_e_CLess Hole_e_CLess)
+    : ( Cctx, Wellformed )
+
+> new = parent decomposed
+Just (Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"],Fundecldone_CLess) Tint_CLess ([Ident_CLess "x"],Block_CLess_cctx1 (Blockstmts_CLess_cctx1 (Compstmt_CLess_cctx1 Cctx_hole (Return_CLess (Expident_CLess (Ident_CLess "x"))))))),Root_s_CLess (Assignment_CLess (Ident_CLess "x") Hole_e_CLess))
+    : Maybe ( Cctx, Wellformed )
+
+> child 1 (Maybe.withDefault (Cctx_hole, Root_p_CLess Hole_p_CLess) new)
+Just (Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"],Fundecldone_CLess) Tint_CLess ([Ident_CLess "x"],Block_CLess_cctx1 (Blockstmts_CLess_cctx1 (Compstmt_CLess_cctx1 (Assignment_CLess_cctx1 Cctx_hole Hole_e_CLess) (Return_CLess (Expident_CLess (Ident_CLess "x"))))))),Root_id_CLess (Ident_CLess "x"))
+    : Maybe ( Cctx, Wellformed )
+
+TODO: substitution example
+\end{lstlisting}
+
+\subsection{SQL}
+
+\subsection{\LaTeX}

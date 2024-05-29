@@ -1,13 +1,13 @@
 needs writing (prioritized):
-    - write about substitution:
+    - refine example languages (make them prettier)
+        - refine C example
+    - make example for latex
+    - editor examples
+        - write about substitution:
         - algorithm
         - pseudocode
         - generated functions
-    - refine example languages (make them prettier)
-    - make example for latex
-    - editor examples
     - write about binders can only be same type
     - re-read conclusion
     - re-read impl. section on conditional, seq. etc.
     - replace typeclass example with a more interesting one
-    
