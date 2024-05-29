@@ -954,71 +954,6 @@ This has been implemented by generating a \texttt{child} function which
 takes an integer $i$ and a decomposed tree, and returns a new cursor context
 and well-formed tree pair.
 
-\begin{example}{Generated child function}{ex:child-fun}
-  Following is an excerpt of the generated \texttt{child} function
-  for the small C language:
-  \begin{lstlisting}[language=elm,style=inline,backgroundcolor=\color{myexamplecolorback}]
-  child : Int -> 
-          ( Cctx, Wellformed ) -> 
-          Maybe ( Cctx, Wellformed )
-  child i decomposed =
-      let
-          ( cctx, wellformed ) =
-              decomposed
-      in
-      case wellformed of
-          Root_p_CLess underCursor ->
-              case underCursor of
-                  Program_CLess arg1 ->
-                      case i of
-                          1 ->
-                              Just
-                                  ( replaceCctxHole 
-                                      i 
-                                      cctx 
-                                      (P_CLess 
-                                        underCursor)
-                                  , Root_fd_CLess 
-                                      arg1
-                                  )
-  
-                          _ ->
-                              Nothing
-  
-                  Hole_p_CLess ->
-                      Nothing
-  
-          Root_s_CLess underCursor ->
-              case underCursor of
-                  Assignment_CLess arg1 arg2 ->
-                      case i of
-                          1 ->
-                              Just
-                                  ( replaceCctxHole 
-                                      i 
-                                      cctx 
-                                      (S_CLess 
-                                        underCursor)
-                                  , Root_id_CLess 
-                                      arg1
-                                  )
-  
-                          2 ->
-                              Just
-                                  ( replaceCctxHole 
-                                      i 
-                                      cctx 
-                                      (S_CLess 
-                                        underCursor)
-                                  , Root_e_CLess 
-                                      arg2
-                                  )
-  
-                          _ ->
-                              Nothing
-\end{lstlisting}
-\end{example}
-
 \subsubsection{Cursor movement - Parent}
 
 Moving the cursor to the parent of the cursor is done by first updating the cursor context
@@ -1054,7 +989,7 @@ well-formed operator, which is then placed at the root of the well-formed tree.
 The checks being performed in the \texttt{insertAsRoot} function ensure that the
 insertion is well-formed, i.e. it checks that if an operator of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ was removed from the cursor context, the root of the well-formed tree must be an operator of sort $(\vec{\hat{s}}_i.\hat{s}_i)\dot{s}$.
 
-\begin{lstlisting}[style=inline,caption={Pseudocode for applying parent operator},label={lst:cursor-movement-parent-pseudocode}]
+\begin{lstlisting}[style=inline,caption={Pseudocode for applying parent operator},language=elm,label={lst:cursor-movement-parent-pseudocode}]
 parent((cctx, wellformed)) =
   let (newCCtx, removed) = moveCCtxHoleUp holepath cctx
   let newWellformed = insertAsRoot removed wellformed
@@ -1107,7 +1042,7 @@ abt of the same sort, ensuring that well-formedness is maintained.
 This is defined as the \texttt{Insert-op} operation in the editor calculus
 (\cref{fig:red-rules-sub}).
 
-In order to implement this, a function needs to
+In order to implement this, a function
 
 For this a \texttt{substitution} function is generated
 

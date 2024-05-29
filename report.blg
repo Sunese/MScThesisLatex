@@ -1,71 +1,73 @@
-This is BibTeX, Version 0.99d (TeX Live 2024)
+This is BibTeX, Version 0.99d
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: report.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
 The style file: biblatex.bst
-Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
-Reallocated global_strs (elt_size=200001) to 20 items from 10.
-Reallocated glb_str_end (elt_size=4) to 20 items from 10.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocating 'name_of_file' (item size: 1) to 11 items.
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+Reallocating 'glb_str_end' (item size: 4) to 20 items.
+Reallocating 'glb_str_ptr' (item size: 4) to 20 items.
+Reallocating 'global_strs' (item size: 1) to 4000000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
 Database file #1: report-blx.bib
 Database file #2: references/ref.bib
 Warning--string name "pub-iso" is undefined
---line 28 of file references/ref.bib
+--line 67 of file references/ref.bib
 Warning--string name "pub-iso:adr" is undefined
---line 29 of file references/ref.bib
-Warning--I didn't find a database entry for "KU-bach-missing-ref"
+--line 69 of file references/ref.bib
 Biblatex version: 3.19
-Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
-Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 20 entries,
+Reallocating 'wiz_functions' (item size: 4) to 9000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+You've used 23 entries,
             6399 wiz_defined-function locations,
-            1341 strings with 13172 characters,
-and the built_in function-call counts, 171713 in all, are:
-= -- 14372
-> -- 2055
-< -- 580
-+ -- 4710
-- -- 768
-* -- 12755
-:= -- 19948
+            1352 strings with 13602 characters,
+and the built_in function-call counts, 203503 in all, are:
+= -- 17232
+> -- 2351
+< -- 662
++ -- 5258
+- -- 878
+* -- 15514
+:= -- 23473
 add.period$ -- 0
-call.type$ -- 20
-change.case$ -- 267
+call.type$ -- 23
+change.case$ -- 292
 chr.to.int$ -- 48
-cite$ -- 38
-duplicate$ -- 17031
-empty$ -- 15225
-format.name$ -- 1323
-if$ -- 34543
+cite$ -- 44
+duplicate$ -- 19126
+empty$ -- 18333
+format.name$ -- 1506
+if$ -- 41244
 int.to.chr$ -- 0
-int.to.str$ -- 54
+int.to.str$ -- 60
 missing$ -- 0
-newline$ -- 724
-num.names$ -- 911
-pop$ -- 7041
+newline$ -- 799
+num.names$ -- 1034
+pop$ -- 8104
 preamble$ -- 1
-purify$ -- 373
+purify$ -- 410
 quote$ -- 0
-skip$ -- 3515
+skip$ -- 4028
 stack$ -- 0
-substring$ -- 28104
-swap$ -- 3024
-text.length$ -- 551
-text.prefix$ -- 19
+substring$ -- 34871
+swap$ -- 3404
+text.length$ -- 635
+text.prefix$ -- 22
 top$ -- 1
-type$ -- 668
+type$ -- 770
 warning$ -- 0
-while$ -- 2339
+while$ -- 2603
 width$ -- 0
-write$ -- 705
-(There were 3 warnings)
+write$ -- 777
+(There were 2 warnings)

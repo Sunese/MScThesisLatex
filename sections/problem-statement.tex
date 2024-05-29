@@ -1,5 +1,5 @@
 \section{Problem statement}
-Structure editors provide a way to manipulate some program's abstract syntax structure directly, in contrast to writing and editing a program's source code in plain text, which also requires a parser to produce an abstract syntax tree. An early example of this is shown by Reps and Teitelbaum\cite{timtom84} in 1984.
+Structure editors provide a way to manipulate the abstract syntax structure of a program directly, in contrast to writing and editing a program's source code in plain text, which also requires a parser to produce an abstract syntax tree. An early example of this is shown by Reps and Teitelbaum\cite{timtom84} in 1984.
 By using a structure editor, the user can avoid syntax errors and might have a better overview of their source code. Moreover, unfinished blocks of code can be represented by syntactic holes, allowing the programmer to develop a mental model of their code, without getting distracted or blocked by syntax errors.
 
 % How is the project trying to solve it
@@ -37,9 +37,9 @@ Based on prior criteria, the project will provide examples for subsets of the fo
     \item \LaTeX
 \end{itemize}
 
-The C language\cite{c-iso-standard} is a popular general-purpose programming language deemed as a good candidate because of it being an imperative language, which stands in contrast to recent works on structure editors\cite{aalborg}\cite{godiksen}\cite{omar} that primarily focus on functional languages. The \texttt{C} programming language also has a strict and symbol-rich concrete syntax, which can easily lead to ill-formed programs when editing a \texttt{C} program in plain text.
+The C language\cite{c-iso-standard} is a popular general-purpose programming language deemed as a good candidate because of it being an imperative language, which stands in contrast to recent works on structure editors\cite{aalborg}\cite{godiksen}\cite{omar} that primarily focus on functional languages. The \texttt{C} programming language also has a strict and symbol-rich concrete syntax, which can easily lead to ill-formed programs when editing a \texttt{C} program in plain text. Consider \cref{ex:c-ill-form-prog} for an example.
 
-\begin{example}{Ill-formed C program}{ex:c-ill-form-prog}
+\begin{myfigure}{Ill-formed C program}{ex:c-ill-form-prog}
     Below is an example of a C program that at first glance looks well-formed, but will be rejected because of a missing semicolon at line 4:
     \begin{lstlisting}
 int main() {
@@ -50,15 +50,16 @@ int main() {
     return 0;
 }
     \end{lstlisting}
-\end{example}
+\end{myfigure}
 
-The SQL language is a popular language deemed as a good candidate, because of it being a declarative language that also provides a contrast to both functional and imperative languages. There exist many dialects of SQL and for the sake of completeness, this project will refer to the PostgreSQL\cite{postgresql-about} variant in any SQL context. Different dialects, including PostgreSQL, have a strict syntax in common, which can also easily lead to ill-formed programs when editing in plain text.
-\begin{example}{Ill-formed SQL query}{sql-ill-formed}
+The SQL language is a popular language deemed as a good candidate, because of it being a declarative language that also provides a contrast to both functional and imperative languages. There exist many dialects of SQL and for the sake of completeness, this project will refer to the PostgreSQL\cite{postgresql-about} variant in any SQL context. Different dialects, including PostgreSQL, have a strict syntax in common, which can also easily lead to ill-formed programs when editing in plain text. Consider \cref{fig:sql-ill-formed} for an example.
+
+\begin{myfigure}{Ill-formed SQL query}{fig:sql-ill-formed}
     Below is an example of a PostgreSQL query which is ill-formed because of a missing comma in line 1 and wrong use of the equality operator in line 2:
     \begin{lstlisting}
 SELECT col-a col-b FROM table
 WHERE col-a == 'x';
 \end{lstlisting}
-\end{example}
+\end{myfigure}
 
 \LaTeX\cite{latex-about} is a markup language suitable for structure editing, which provides a contrast to the already-picked examples since it is not considered a programming language.

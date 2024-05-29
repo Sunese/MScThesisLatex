@@ -1,20 +1,15 @@
-This project was exploratory in nature, aiming to implement a generic editor
-based on the work of the Aalborg project\cite{aalborg} and other related work.
+This project was exploratory in nature, aiming to implement a generic editor based on the work of the Aalborg project\cite{aalborg} and related work. The primary objective was to create a type-safe, generalized syntax-directed editor capable of supporting any language, including but not limited to programming languages. The implementation achieved a minimal viable product that can instantiate a syntax-directed editor for any language, with basic editing functionalities such as cursor movement and substitutions. This was demonstrated through practical examples involving subsets of different languages, including C, SQL, and LaTeX, in contrast to most related work
+being limited to a single functional language.
 
-Only atomic prefix commands have been implemented, including the ability to
-move the cursor and perform substitutions. This was a necessary first step
-to implement the remaining editor expressions, which unfortunately were not
-completed. This however has led to a minimal viable product, which is a
-program that can instantiate a syntax-directed editor for any language, where basic edits can be performed on the syntax tree directly.
+Although only atomic prefix commands have been implemented at the time of writing, this serves as a necessary first step toward completing the remaining editor expressions. The current implementation showcases the generality and potential of the editor, even in its nascent stage.
 
-\subsection{Future work}
-Editor expressions for the remaining commands should be implemented, this is possible by following a similar approach to the one used for the atomic prefix commands, i.e. by implementing function generators for each command based on its semantics.
+\section{Future work}
+Editor expressions for the remaining commands should be implemented, this is possible by following a similar approach to the one used for the atomic prefix commands, i.e. by implementing function generators for each command based on the semantics provided in the editor calculus. This would allow for a more complete editor, capable of handling more complex editing tasks.
 
+Different views is also a feature that could be implemented, allowing for the editor to display the syntax tree in different ways, such as a tree view or string-format (i.e. pretty-printing). The model in the implementation is already designed to hold the concrete syntax of an operator (the \texttt{term} field), allowing for pretty-printing to be implemented with relative ease.
 
-Different views is also a feature that could be implemented, allowing for the editor to display the syntax tree in different ways, such as a tree view or string-format (i.e. pretty-printing). The model in the implementation is already designed to hold the concrete syntax of an operator, allowing for pretty-printing to be implemented with relative ease.
-
-There is currently no active use of binders in the editor, leaving 
-out the possibility of potentially checking for use-before-declarations or 
+There is currently no active use of binders in the editor, leaving
+out the possibility of potentially checking for use-before-declarations or
 shadowing. However, the model in the implementation does hold information about binders, making future work on this easier.
 
 Given the generic nature of the editor, it would be interesting to see
@@ -22,9 +17,5 @@ an implementation in a language with support for typeclasses, such as Haskell.
 This should allow for a more concise implementation overall, being less rigid
 than the current implementation, since it relies on references to functions and
 data types via a low-level interface in the Elm CodeGen package, which refers
-to them with manipulated strings
-This is in contrast to typeclass
-instances, which would allow for a more abstract representation of a tree
-of any sort.
-
-
+to them with manipulated strings. This is in contrast to typeclass
+instances, which would allow for a more abstract representation, with editor functions supporting any tree of any sort, without the need for explicit references to functions implementing actions for each sort.

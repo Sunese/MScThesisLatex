@@ -153,8 +153,7 @@ parent decomposed =
 
                 Just newWellformed ->
                     Just ( newCctx, newWellformed )
-
-...
+    ...
 
 child : Int -> ( Cctx, Wellformed ) -> Maybe ( Cctx, Wellformed )
 child i decomposed =
@@ -213,8 +212,8 @@ the second child of the \texttt{Assignment\_CLess\_cctx2} operator, which
 contains a cursor context hole. The well-formed tree consists only
 of the hole at the second child of the assignment operator.
 
-Applying the \texttt{parent} function to the decomposed tree results in a 
-new cursor context and well-formed tree pair, where the cursor has been moved 
+Applying the \texttt{parent} function to the decomposed tree results in a
+new cursor context and well-formed tree pair, where the cursor has been moved
 to the assignment operator itself, as expected.
 
 \begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of C language editor}, label={lst:c-repl}]
@@ -284,14 +283,148 @@ given in \cref{lst:SQL-adts}, alongside relevant functions for cursor movement (
 and substitution (\cref{lst:SQL-sub}).
 
 \begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the SQL language}, label={lst:SQL-adts}]
+type Q
+    = Select Id Id Clause
+    | Hole_q
+    | Cursor_q Q
 
+type Cmd
+    = Insert Id (Bind Id Q)
+    | Hole_cmd
+    | Cursor_cmd Cmd
+...
+
+type Base
+    = Q Q
+    | Cmd Cmd
+    | Id Id
+    | Const Const
+    | Clause Clause
+    | Cond Cond
+    | Exp Exp
+
+type Q_CLess
+    = Select_CLess Id_CLess Id_CLess Clause_CLess
+    | Hole_q_CLess
+
+type Cmd_CLess
+    = Insert_CLess Id_CLess (Bind Id_CLess Q_CLess)
+    | Hole_cmd_CLess
+...
+
+type Cctx
+    = Cctx_hole
+    | Select_CLess_cctx1 Cctx Id_CLess Clause_CLess
+    | Select_CLess_cctx2 Id_CLess Cctx Clause_CLess
+    | Select_CLess_cctx3 Id_CLess Id_CLess Cctx
+    | Insert_CLess_cctx1 Cctx (Bind Id_CLess Q_CLess)
+    ...
+
+type Wellformed
+    = Root_q_CLess Q_CLess
+    | Root_cmd_CLess Cmd_CLess
+    | Root_id_CLess Id_CLess
+    | Root_const_CLess Const_CLess
+    | Root_clause_CLess Clause_CLess
+    | Root_cond_CLess Cond_CLess
+    | Root_exp_CLess Exp_CLess
 \end{lstlisting}
 
 \begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the SLQ language}, label={lst:SQL-movement}]
+getCursorPath : List Int -> Base -> List Int
+getCursorPath path base =
+    case base of
+        Q q ->
+            case q of
+                Select arg1 arg2 arg3 ->
+                    (getCursorPath (path ++ [ 1 ]) (Id arg1)
+                        ++ getCursorPath
+                            (path ++ [ 2 ])
+                            (Id arg2)
+                    )
+                        ++ getCursorPath (path ++ [ 3 ]) (Clause arg3)
+
+                Hole_q ->
+                    []
+
+                Cursor_q _ ->
+                    path
+        ...
+parent : ( Cctx, Wellformed ) -> Maybe ( Cctx, Wellformed )
+parent decomposed =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case moveCCtxHoleUp cctx (getCctxPath cctx []) of
+        Nothing ->
+            Nothing
+
+        Just ( newCctx, removedCctx ) ->
+            case addParent removedCctx wellformed of
+                Nothing ->
+                    Nothing
+
+                Just newWellformed ->
+                    Just ( newCctx, newWellformed )
+
+addParent : Cctx -> Wellformed -> Maybe Wellformed
+addParent cctx wellformed =
+    case cctx of
+        Cctx_hole ->
+            Nothing
+
+        Select_CLess_cctx1 arg1 arg2 arg3 ->
+            case wellformed of
+                Root_id_CLess underCursor ->
+                    Just (Root_q_CLess (Select_CLess underCursor arg2 arg3))
+
+                _ ->
+                    Nothing
+        ...
+
+
+moveCCtxHoleUp : Cctx -> List Int -> Maybe ( Cctx, Cctx )
+moveCCtxHoleUp cctx path =
+    case path of
+        [ _, _ ] ->
+            case cctx of
+                Cctx_hole ->
+                    Nothing
+
+                Select_CLess_cctx1 arg1 arg2 arg3 ->
+                    Just ( Select_CLess_cctx1 Cctx_hole arg2 arg3, arg1 )
+                ...
+
+substitute : ( Cctx, Wellformed ) -> CursorLess -> Maybe ( Cctx, Wellformed )
+substitute decomposed sub =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case wellformed of
+        Root_q_CLess _ ->
+            case sub of
+                Q_CLess sub0 ->
+                    Just ( cctx, Root_q_CLess sub0 )
+
+                _ ->
+                    Nothing
+        ...
 \end{lstlisting}
 
 Sample editing session in the Elm REPL for the generated SQL editor is
-shown in \cref{lst:SQL-repl}.
+shown in \cref{lst:SQL-repl}. The sample tree consists of a SQL query
+selecting every column from a table called "table-b" where the the value in
+"col-a" is greater than 2. For the purpose of demonstration, this sample
+has no cursor, showing that the decomposition of the tree will result in a
+cursor context containing only the context hole and a well-formed tree
+with the cursor at the root of the tree. Attempting to move the cursor to the
+parent will result in \texttt{Nothing}, as the cursor is already at the root
+of the tree. Moving the cursor to child 1 moves the cursor to the first child
+of the \texttt{Select} operator, as expected. Finally, simple substitution
+is shown where the cursor is encapsulating the root of tree, resulting
+in the substitute being the only element under the updated cursor.
 
 \begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of the SQL editor}, label={lst:SQL-repl}]
 > example = Q (Select (Ident "col-a") (Ident "table-b") (Where (Greater (Eident (Ident "col-a")) (Econst (Num 2)))))
@@ -513,7 +646,15 @@ substitute decomposed sub =
 \end{lstlisting}
 
 Sample editing session in the Elm REPL for the generated \LaTeX \ editor is
-shown in \cref{lst:latex-repl}.
+shown in \cref{lst:latex-repl}. The example tree represents a \LaTeX \ document of type "article" with an environment called "myenv", where the
+definition of this environment contains holes. The body of the document
+contains the text "Hello World!". The cursor is located at the text of the
+document body. Decomposing the tree results in a cursor context containing
+the whole tree, except for the text content of the document body, which
+is under the root of the well-formed tree. Moving the cursor to the parent
+results in the cursor being moved to the root of the sample tree. Simple
+substitution is shown where if the cursor is at the text content, we can
+replace it with another text content operator with an updated string value.
 
 \begin{lstlisting}[style=inline, language=elm, caption={Editing sessions with the \LaTeX \ editor in the Elm REPl}, label={lst:latex-repl}]
 > example = D (Latexdoc (Ident "article") Hole_a Hole_a ( [ Ident "myenv" ], Cursor_c (TextContent "Hello World!") ))

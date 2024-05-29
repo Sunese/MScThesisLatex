@@ -1,4 +1,5 @@
 needs writing (prioritized):
+    - make TOC only fill up 1 page
     - write about how it is hard to
         define an abstract syntax with binders
         - write about binders can only be same type 
@@ -9,11 +10,9 @@ needs writing (prioritized):
         - algorithm
         - pseudocode
         - generated functions
-    - re-read conclusion
     - re-read impl. section on conditional, seq. etc.
     - some text for the summaries of gen. editor calculus / harper
         can be very short.
         - same for editor examples
-    - make abstract with link to GitHub repo
-    - conclusion: "... has not been implemented at time of writing"
     - replace typeclass example with a more interesting one
+    - Hans' comments
