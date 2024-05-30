@@ -1,18 +1,32 @@
-needs writing (prioritized):
-    - make TOC only fill up 1 page
-    - write about how it is hard to
-        define an abstract syntax with binders
-        - write about binders can only be same type 
-        - note about how binders' variables are not stored in the model,
-        only the generalized arity is.
-    - editor examples
-        - write about substitution:
-        - algorithm
-        - pseudocode
-        - generated functions
-    - re-read impl. section on conditional, seq. etc.
-    - some text for the summaries of gen. editor calculus / harper
-        can be very short.
-        - same for editor examples
-    - replace typeclass example with a more interesting one
-    - Hans' comments
+- make TOC only make up 1 page
+- write about how it is hard to
+    define an abstract syntax with binders
+    - write about binders can only be same type 
+        - ^^ maybe also not that this is not clear in 
+            Harper's definition (and therefore the generalized)
+            calculus if bound variables can be of different
+            sorts. Is it so?
+    - note about how binders' variables are not stored in the model,
+    only the generalized arity is.
+- editor examples
+    - write about substitution:
+    - algorithm
+    - pseudocode
+    - generated functions
+- re-read impl. section on conditional, seq. etc.
+- some text for the summaries of gen. editor calculus / harper
+    can be very short.
+    - same for editor examples
+- replace typeclass example with a more interesting one
+- Hans' comments
+
+
+
+
+chapters:
+    ✅ Abstract
+    □ Introduction
+    □ Background
+    □ Implementation
+    □ Editor examples
+    □ Conclusion

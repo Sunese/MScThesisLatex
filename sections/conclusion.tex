@@ -1,12 +1,13 @@
-This project was exploratory in nature, aiming to implement a generic editor based on the work of the Aalborg project\cite{aalborg} and related work. The primary objective was to create a type-safe, generalized syntax-directed editor capable of supporting any language, including but not limited to programming languages. The implementation achieved a minimal viable product that can instantiate a syntax-directed editor for any language, with basic editing functionalities such as cursor movement and substitutions. This was demonstrated through practical examples involving subsets of different languages, including C, SQL, and LaTeX, in contrast to most related work
-being limited to a single functional language.
+This project was exploratory in nature, aiming to implement a generic editor based on the work of the Aalborg project\cite{aalborg} and related work. The primary objective was to create a type-safe, generalized syntax-directed editor capable of supporting any language, including but not limited to programming languages. The implementation achieved a minimal viable product that can instantiate a syntax-directed editor for any language, with basic editing functionalities such as cursor movement and substitutions. This was demonstrated through practical examples involving subsets of different languages, including C, SQL, and LaTeX.
 
 Although only atomic prefix commands have been implemented at the time of writing, this serves as a necessary first step toward completing the remaining editor expressions. The current implementation showcases the generality and potential of the editor, even in its nascent stage.
 
 \section{Future work}
-Editor expressions for the remaining commands should be implemented, this is possible by following a similar approach to the one used for the atomic prefix commands, i.e. by implementing function generators for each command based on the semantics provided in the editor calculus. This would allow for a more complete editor, capable of handling more complex editing tasks.
+Editor expressions for the remaining commands should be implemented. This is possible by following a similar approach to the one used for the atomic prefix commands, i.e. by implementing function generators for each command based on the semantics provided in the editor calculus. This would allow for a more complete editor, capable of handling all editor expression provided by the calculus.
 
-Different views is also a feature that could be implemented, allowing for the editor to display the syntax tree in different ways, such as a tree view or string-format (i.e. pretty-printing). The model in the implementation is already designed to hold the concrete syntax of an operator (the \texttt{term} field), allowing for pretty-printing to be implemented with relative ease.
+Different views is also a feature that could be implemented, allowing for the editor to display the syntax tree in different ways, such as a tree view or string-format (pretty-printing). The implementation of the non-generic
+structure editor\cite{KU-bach} was successful in having a tree view, which can serve
+a good starting point. The model in this implementation is already designed to hold the concrete syntax of an operator (the \texttt{term} field), allowing for pretty-printing to be implemented with relative ease.
 
 There is currently no active use of binders in the editor, leaving
 out the possibility of potentially checking for use-before-declarations or
