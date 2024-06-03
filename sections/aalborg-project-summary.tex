@@ -10,20 +10,20 @@ The calculus proposed by Godiksen et al. \cite{godiksen} has a single term for t
 
 \begin{definition}{Abstract syntax of a language}{def:base-as}
     The abstract syntax of a language is given by the following:
-    
+
     \begin{enumerate}
         \item A set of sorts $\mathcal{S}$
         \item An arity-indexed family of operators $\mathcal{O}$
         \item A sort-indexed family of variables $\mathcal{X}$
     \end{enumerate}
-    
+
     Then, for every sort $s \in \mathcal{S}$, the following operators are added to $\mathcal{O}$
-    
+
     \begin{enumerate}
         \item A $hole_s$ operator with arity $()s$
         \item A $cursor_s$ operator with arity $(s)s$
     \end{enumerate}
-    \end{definition}
+\end{definition}
 
 
 
@@ -31,12 +31,12 @@ The calculus proposed by Godiksen et al. \cite{godiksen} has a single term for t
     Below is a simple language consisting of arithmetic expressions and local declarations:
     \[
         \begin{aligned}
-                & \text{Sort} &  & \text{Term}                        &  & \text{Operator} &  & \text{Arity} &  & \\
-                & s ::=       &  & \text{let} \ x = e \ \text{in} \ s &  & let             &  & (e,e.s)s     &  & \\
-                & \quad |     &  & e                                  &  & exp             &  & (e)s         &  & \\
-                & e ::=       &  & e_1 + e_2                          &  & plus            &  & (e,e)e       &  & \\
-                & \quad |     &  & n                                  &  & num[n]          &  & ()e          &  & \\
-                & \quad |     &  & x                                  &  & var[x]          &  & ()e
+             & \text{Sort} &  & \text{Term}                        &  & \text{Operator} &  & \text{Arity} &  & \\
+             & s ::=       &  & \text{let} \ x = e \ \text{in} \ s &  & let             &  & (e,e.s)s     &  & \\
+             & \quad |     &  & e                                  &  & exp             &  & (e)s         &  & \\
+             & e ::=       &  & e_1 + e_2                          &  & plus            &  & (e,e)e       &  & \\
+             & \quad |     &  & n                                  &  & num[n]          &  & ()e          &  & \\
+             & \quad |     &  & x                                  &  & var[x]          &  & ()e
         \end{aligned}
     \]
 
@@ -59,7 +59,15 @@ The calculus proposed by Godiksen et al. \cite{godiksen} has a single term for t
 \end{example}
 
 \subsubsection{Editor calculus}
-The abstract syntax of the general editor calculus (\cref{fig:as-editor}) resembles the one from Godiksen et al., the only difference being the lack of an $eval$ construct, since the generalized editor only considers the static and structural properties of abstract syntax.
+The abstract syntax of the general editor calculus (\cref{fig:as-editor}) resembles the one from Godiksen et al., the only difference being the lack of an $eval$ construct, since the generalized editor only considers the static and structural properties of abstract syntax. The key components of the calculus include:
+
+\begin{itemize}
+    \item Atomic prefix commands ($pi$): These commands facilitate the traversal and modification of the abstract syntax tree. They include operations for moving the cursor to a child or parent and operator substitution.
+    \item Conditions ($\phi$): These are logical expressions used to control the flow of the editor actions based on the structure and properties of the syntax tree. Conditions can involve logical negation, conjunction, disjunction, and modal operators that answer questions about the
+          presence of operators in the syntax tree.
+    \item Editor expressions ($E$): These are the core constructs of the
+          calculus, representing the actions that can be performed on the syntax tree, including conditional execution and sequence of actions.
+\end{itemize}
 
 \begin{myfigure}{Abstract syntax of general editor calculus}{fig:as-editor}
     \[
@@ -72,18 +80,18 @@ The abstract syntax of the general editor calculus (\cref{fig:as-editor}) resemb
 \end{myfigure}
 
 \subsubsection{Cursorless trees}
-The notion of cursorless trees is introduced to support a single cursor only being
-able to encapsulate a single node, hence the rest of the tree being 
-considered cursorless.
+The notion of cursorless trees is introduced to support a single cursor only being able to encapsulate a single node, hence the rest of the tree being considered cursorless.
+
+The abstract syntax of cursorless trees formalizes this notion by introducing new sorts and operators that represent the tree without an active cursor. These sorts and operators accommodate the requirement that the cursor can only be at one location at a time.
 
 \begin{definition}{Abstract syntax of cursorless trees}{def:cursorless-trees}
     The abstract syntax of cursorless trees is given by:
     \begin{enumerate}
         \item The sorts $\hat{\mathcal{S}} = \{ \hat{s} \}_{s \in \mathcal{S}}$
         \item The family of cursorless operators $\hat{\mathcal{O}}$ is made by adding
-        the operator $\hat{o}$ of arity 
-        $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$
-        for every $o \in \mathcal{O}$ of arity $(\vec{s}_1.s_1,...,\vec{s}_n.s_n)s$
+              the operator $\hat{o}$ of arity
+              $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$
+              for every $o \in \mathcal{O}$ of arity $(\vec{s}_1.s_1,...,\vec{s}_n.s_n)s$
         \item The family of variables $\hat{\mathcal{X}}$
     \end{enumerate}
 \end{definition}
@@ -91,43 +99,41 @@ considered cursorless.
 \subsubsection{Cursor Context}
 \label{subsubsec:cursor-context}
 A cursor context $C$ holds information about the current tree, up until
-a context hole, which is filled out by a well-formed tree including the cursor. 
-In other words, the actual cursor is located somewhere in the well-formed tree, 
-but is not part of the cursor context.
+a context hole, which is filled out by a well-formed tree including the cursor.
+In other words, the actual cursor is located somewhere in the well-formed tree but is not part of the cursor context.
+The cursor context acts as a template that outlines the structure of the tree around the cursor, which is inspired by the zipper data structure by Huet\cite{zipper}, as a way to locate the cursor in a tree.
 
 \begin{definition}{Abstract syntax of cursor contexts}{def:cursor-context}
-The abstract syntax of cursor contexts is given by:
-\begin{enumerate}
-    \item The sorts $\mathcal{S}^C = \hat{\mathcal{S}} \cup \{C\}$
-    \item The family of operators $\mathcal{O}^C = \hat{\mathcal{O}}$ extended with the $[\cdot]$ operator with arity $()C$
-    \item For every operator $\hat{o} \in \hat{\mathcal{O}}$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$ and for every $1 \leq i \leq n$ the operator $o_i^C$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ to $\mathcal{O}^C$
-    \item The family of variables $\mathcal{X}^C = \hat{\mathcal{X}}$
-\end{enumerate}
+    The abstract syntax of cursor contexts is given by:
+    \begin{enumerate}
+        \item The sorts $\mathcal{S}^C = \hat{\mathcal{S}} \cup \{C\}$
+        \item The family of operators $\mathcal{O}^C = \hat{\mathcal{O}}$ extended with the $[\cdot]$ operator with arity $()C$
+        \item For every operator $\hat{o} \in \hat{\mathcal{O}}$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$ and for every $1 \leq i \leq n$ the operator $o_i^C$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.C,...,\vec{\hat{s}}_n.\hat{s}_n)C$ to $\mathcal{O}^C$
+        \item The family of variables $\mathcal{X}^C = \hat{\mathcal{X}}$
+    \end{enumerate}
 \end{definition}
 
 \subsubsection{Well-formed trees}
 \label{subsubsec:well-formed-trees}
-Well-formed trees are trees with a single cursor, where the cursor is located either
-at the root or one of the immediate children. The rest of the tree is cursorless,
-hence being well-formed since it only contains a single cursor.
+Well-formed trees are characterized by having a single cursor, which is either at the root or one of the immediate children, with the rest of the tree being cursorless. This structure ensures the tree is considered well-formed because it contains only one cursor. The concept of well-formed trees is fundamental to the generalized editor calculus. Edit actions are restricted to well-formed trees, which guarantees that the cursor is in a valid position and that there is only one cursor present in the tree.
 
 \begin{definition}{Abstract syntax of well-formed trees}{def:well-formed-trees}
-The abstract syntax of well-formed trees is given by:
-\begin{enumerate}
-    \item The sorts $\dot{\mathcal{S}} = \hat{\mathcal{S}} \cup \{ \dot{s} \}_{s \in \mathcal{S}}$
-    \item The family of operators $\dot{\mathcal{O}} = \hat{\mathcal{O}}$ extended with an operator of arity $(\hat{s})\dot{s}$ for every $\hat{s} \in \hat{\mathcal{S}}$
-    \item For every operator $\hat{o} \in \hat{\mathcal{O}}$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$ and for every $1 \leq i \leq n$ the operator $\dot{o}_i$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.\hat{s}_i,...,\vec{\hat{s}}_n.\hat{s}_n)\dot{s}$ is added to $\dot{\mathcal{O}}$
-    \item The family of variables $\dot{\mathcal{X}} = \hat{\mathcal{X}}$
-\end{enumerate}
+    The abstract syntax of well-formed trees is given by:
+    \begin{enumerate}
+        \item The sorts $\dot{\mathcal{S}} = \hat{\mathcal{S}} \cup \{ \dot{s} \}_{s \in \mathcal{S}}$
+        \item The family of operators $\dot{\mathcal{O}} = \hat{\mathcal{O}}$ extended with an operator of arity $(\hat{s})\dot{s}$ for every $\hat{s} \in \hat{\mathcal{S}}$
+        \item For every operator $\hat{o} \in \hat{\mathcal{O}}$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_n.\hat{s}_n)\hat{s}$ and for every $1 \leq i \leq n$ the operator $\dot{o}_i$ of arity $(\vec{\hat{s}}_1.\hat{s}_1,...,\vec{\hat{s}}_i.\hat{s}_i,...,\vec{\hat{s}}_n.\hat{s}_n)\dot{s}$ is added to $\dot{\mathcal{O}}$
+        \item The family of variables $\dot{\mathcal{X}} = \hat{\mathcal{X}}$
+    \end{enumerate}
 \end{definition}
 
-Given this, a well-formed abt $a \in \mathcal{B[\mathcal{X}]}$ is any abt that 
+Given this, a well-formed abt $a \in \mathcal{B[\mathcal{X}]}$ is any abt that
 can be interpreted as $C[\dot{a}]$, where $C$ is a cursor context and $\dot{a}$ is a well-formed tree.
 
 \subsection{Semantics}
+The semantics of the editor calculus are defined through reduction rules that describe how editor expressions are evaluated and how the cursor is manipulated within the syntax tree.
+
 Reduction rules for editor expressions are presented in \cref{fig:red-rules-editor-exp}, substitution in \cref{fig:red-rules-sub} and cursor movement in \cref{fig:red-rules-movement}.
-
-
 
 \begin{myfigure}{Reduction rules for editor expressions}{fig:red-rules-editor-exp}
     \[
@@ -160,6 +166,7 @@ Reduction rules for editor expressions are presented in \cref{fig:red-rules-edit
         \text{(Insert-op)} \ \frac{}{[\hat{a}] \stackrel{\{ o \}}{\Rightarrow} [o(\vec{x}_1.\hole_{s_1};...;\vec{x}_n.\hole_{s_n})]} \hat{a} \in \mathcal{B}[\mathcal{X}]_s \text{where } s \text{ is the sort of } o
     \]
 \end{myfigure}
+
 \begin{myfigure}{Reduction rules for cursor movement}{fig:red-rules-movement}
 
     \[
@@ -171,7 +178,18 @@ Reduction rules for editor expressions are presented in \cref{fig:red-rules-edit
     \]
 \end{myfigure}
 
-Satisfaction rules for the propositional connectives are presented in \cref{fig:sat-rel-prop-connectives} and modalitites in \cref{fig:sat-rel-modal-ops}.
+Satisfaction rules for the propositional connectives and modalities define the conditions under which logical expressions hold true for a given
+cursorless tree encapsulated by the cursor (i.e. a well-formed tree).
+
+The satisfaction rules for propositional connectives specify how logical negation, conjunction, and disjunction are evaluated, while the satisfaction rules for modalities describe how modal operators, which express following:
+
+\begin{itemize}
+    \item $@o$ holds if the operator $o$ is at the cursor
+    \item $\Diamond o$ holds if the operator $o$ is in one of the subtrees of the operator at the cursor
+    \item $\square o$ holds if the operator $o$ is in all subtrees of the operator at the cursor
+\end{itemize}
+
+The rules are given in \cref{fig:sat-rel-prop-connectives} and \cref{fig:sat-rel-modal-ops}.
 
 \begin{myfigure}{Satisfaction rules for propositional connectives}{fig:sat-rel-prop-connectives}
     \[
@@ -248,7 +266,7 @@ The types of operators in the $\lambda$-calculus can be inferred by their arity.
     \]
 \end{myfigure}
 
-Then, any abt can be encoded in the extended simply typed $\lambda$-calculus be the encoding in \cref{fig:encoding-abt}.
+Then, any abt can be encoded in the extended simply typed $\lambda$-calculus by the encoding in \cref{fig:encoding-abt}.
 
 \begin{myfigure}{Encoding of abts}{fig:encoding-abt}
     \[
@@ -581,3 +599,8 @@ With the auxiliary functions, the encoding of propositional connectives is given
                         & \ | \ \_ \rightarrow \top
     \end{flalign*}
 \end{myfigure}
+
+The Aalborg project\cite{aalborg} also includes a proof of the soundness of the encoding, which is omitted here.
+
+Given the encoding of the generalized editor calculus in the extended $\lambda$-calculus, the same encoding can be followed to encode the generalized editor calculus in a language like Elm or Haskell, since they are based on the principles of the $\lambda$-calculus and support pattern matching, pairs and
+recursion.

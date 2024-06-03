@@ -1,5 +1,5 @@
 \section{Problem statement}
-Structure editors provide a way to manipulate the abstract syntax structure of a program directly, in contrast to writing and editing a program's source code in plain text, which also requires a parser to produce an abstract syntax tree. An early example of this is shown by Reps and Teitelbaum\cite{timtom84} in 1984.
+Structure editors provide a way to manipulate the abstract syntax structure of a program directly, in contrast to writing and editing the source code of a program in plain text, which also requires a parser to produce an abstract syntax tree. An early example of this is shown by Reps and Teitelbaum\cite{timtom84} in 1984.
 By using a structure editor, the user can avoid syntax errors and might have a better overview of their source code. Moreover, unfinished blocks of code can be represented by syntactic holes, allowing the programmer to develop a mental model of their code, without getting distracted or blocked by syntax errors.
 
 % How is the project trying to solve it
@@ -41,7 +41,7 @@ The C language\cite{c-iso-standard} is a popular general-purpose programming lan
 
 \begin{myfigure}{Ill-formed C program}{ex:c-ill-form-prog}
     Below is an example of a C program that at first glance looks well-formed, but will be rejected because of a missing semicolon at line 4:
-    \begin{lstlisting}
+    \begin{lstlisting}[style=figurestyle]
 int main() {
     int x = 0;
     for (int i; i = 0; i++) {
@@ -56,10 +56,11 @@ The SQL language is a popular language deemed as a good candidate, because of it
 
 \begin{myfigure}{Ill-formed SQL query}{fig:sql-ill-formed}
     Below is an example of a PostgreSQL query which is ill-formed because of a missing comma in line 1 and wrong use of the equality operator in line 2:
-    \begin{lstlisting}
+    \begin{lstlisting}[style=figurestyle]
 SELECT col-a col-b FROM table
 WHERE col-a == 'x';
 \end{lstlisting}
 \end{myfigure}
 
-\LaTeX\cite{latex-about} is a markup language suitable for structure editing, which provides a contrast to the already-picked examples since it is not considered a programming language.
+\LaTeX\cite{latex-about} is a markup language suitable for structure editing, which provides a contrast to the already-picked examples since it is not considered a programming language. \LaTeX\ is suitable for structure editing
+as documents often involve complex structures with nested environments and commands, which can be cumbersome to manage in plain text. A structure editor can significantly simplify the process of creating and managing these complex documents by providing a more intuitive interface.

@@ -22,6 +22,11 @@
 \usepackage{lastpage}
 \usepackage{caption}
 \usepackage{subcaption}
+\usepackage{lstautogobble}  % Fix relative indenting
+\usepackage{color}          % Code coloring
+\usepackage{zi4}            % Nice font
+
+
 
 \usepackage{import}
 
@@ -34,7 +39,12 @@
 \colorlet{defcolor}{pink!90!black}
 \colorlet{defcolorback}{defcolor!10!white}
 
-\colorlet{myinlinecolorback}{gray!10!white}
+\colorlet{myinlinecolorback}{pink!20!white}
+
+\definecolor{bluekeywords}{rgb}{0.13, 0.13, 1}
+\definecolor{greencomments}{rgb}{0, 0.5, 0}
+\definecolor{redstrings}{rgb}{0.9, 0, 0}
+\definecolor{graynumbers}{rgb}{0.5, 0.5, 0.5}
 
 \tcbset{
     enhanced,
@@ -46,30 +56,31 @@
     center title
 }
 
-\newtcolorbox[blend into=figures]{myfigure}[2]{
+\newtcolorbox[blend into=figures]{myfigure}[3][]{
     colback=myfigurecolorback,
     colframe=myfigurecolor,
-    title={#1},
-    label={#2},
-    center
+    title={#2},
+    label={#3},
+    center,
+    #1
 }
 
-\newtcolorbox[auto counter]{example}[2]{
+\newtcolorbox[auto counter]{example}[3][]{
     colback=myexamplecolorback,
     colframe=myexamplecolor,
-    title=Example \thetcbcounter: #1,
-    label={#2},
+    title=Example \thetcbcounter: #2,
+    label={#3},
     center,
-    breakable,
+    #1
 }
 
-\newtcolorbox[auto counter]{definition}[2]{
+\newtcolorbox[auto counter]{definition}[3][]{
     colback=defcolorback,
     colframe=defcolor,
-    title=Definition \thetcbcounter: #1,
-    label={#2},
+    title=Definition \thetcbcounter: #2,
+    label={#3},
     center,
-    breakable
+    #1
 }
 
 \crefname{tcb@cnt@example}{Example}{Example}
@@ -126,29 +137,31 @@
 
 
 \lstdefinestyle{inline}{
-    basicstyle=\small\ttfamily, % Global Code Style
-    captionpos=b, % Position of the Caption (t for top, b for bottom)
-    extendedchars=true, % Allows 256 instead of 128 ASCII characters
-    tabsize=2, % Number of spaces indented when discovering a tab 
-    columns=fixed, % Make all characters equal width
-    keepspaces=false, % Does not ignore spaces to fit width, convert tabs to spaces
-    breaklines=true, % Wrap lines if they don't fit
-    showstringspaces=false, % Lets spaces in strings appear as real spaces
-    mathescape=true, % Enable math escape
-    commentstyle=\color{codegreen},
-    keywordstyle=\color{magenta},
-    stringstyle=\color{codepurple},
-    backgroundcolor=\color{myinlinecolorback},
-    frame=single,
-    numbers=left,
+    autogobble,
+    columns=fullflexible,
+    showspaces=false,
+    showtabs=false,
+    breaklines=true,
+    showstringspaces=false,
+    breakatwhitespace=true,
+    escapeinside={(*@}{@*)},
+    commentstyle=\color{greencomments},
+    keywordstyle=\color{bluekeywords},
+    stringstyle=\color{redstrings},
+    numberstyle=\color{graynumbers},
     numberstyle=\tiny\color{codegray},
-    % xleftmargin=2em,
+    backgroundcolor=\color{myinlinecolorback},
+    basicstyle=\ttfamily\footnotesize,
+    frame=single,
     frameround=tttt,
-    % framexleftmargin=1.5em
+    tabsize=2,
+    captionpos=b,
+    numbers=left,
+    % xleftmargin=2em,
 }
 
 \lstdefinestyle{figurestyle}{
-    basicstyle=\small\ttfamily, % Global Code Style
+    basicstyle=\ttfamily\footnotesize,
     captionpos=b, % Position of the Caption (t for top, b for bottom)
     extendedchars=true, % Allows 256 instead of 128 ASCII characters
     tabsize=2, % Number of spaces indented when discovering a tab 

@@ -1,9 +1,10 @@
 \section{C}
 
 The syntax for the C language is given in \cref{ex:c-spec}.
-The same syntax, but in a more computer-friendly format is given in \cref{lst:c-bnf}.
+The same syntax, but in the parseable format (\cref{lst:spec-lang-bnf}) is given in \cref{lst:c-bnf}.
 
-\begin{lstlisting}[style=inline, caption={Parseable format of C language syntax}, label={lst:c-bnf}]
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, caption={Parseable format of C language syntax}, label={lst:c-bnf}]
 p in Prog
 s in Stmt
 vd in VariableDecl
@@ -50,12 +51,14 @@ e ::= %int # ()e # int[Int] | %char # ()e # char[Char]
     | id # (id)e # expident
 id ::= %string # ()id # ident[String]
 \end{lstlisting}
+\end{minipage}
 
 When passed the parseable format, the parser will produce the algebraic data types
 given in \cref{lst:c-adts}, alongside relevant functions for cursor movement (\cref{lst:c-movement})
 and substitution (\cref{lst:c-sub}).
 
-\begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the C language}, label={lst:c-adts}]
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the C language}, label={lst:c-adts}]
 type P
     = Program Fd
     | Hole_p
@@ -86,9 +89,7 @@ type S_CLess
 type Cctx
     = Cctx_hole
     | Program_CLess_cctx1 Cctx
-    | Block_CLess_cctx1 Cctx
-    | Blockdecls_CLess_cctx1 Cctx
-    | Blockstmts_CLess_cctx1 Cctx
+    ...
     | Vardecl_CLess_cctx1 Cctx E_CLess (Bind Id_CLess Bi_CLess)
     | Vardecl_CLess_cctx2 T_CLess Cctx (Bind Id_CLess Bi_CLess)
     | Vardecl_CLess_cctx3 T_CLess E_CLess (Bind Id_CLess Cctx)
@@ -100,13 +101,9 @@ type Wellformed
     | Root_vd_CLess Vd_CLess
     | Root_fd_CLess Fd_CLess
     | Root_t_CLess T_CLess
-    | Root_id_CLess Id_CLess
-    | Root_e_CLess E_CLess
-    | Root_b_CLess B_CLess
-    | Root_bi_CLess Bi_CLess
-    | Root_fa_CLess Fa_CLess
-    | Root_cond_CLess Cond_CLess
+    ...
 \end{lstlisting}
+\end{minipage}
 
 \begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the C language}, label={lst:c-movement}]
 getCursorPath : List Int -> Base -> List Int
@@ -200,6 +197,34 @@ child i decomposed =
         ...
 \end{lstlisting}
 
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor substitution for the C language}, label={lst:c-sub}]
+substitute : ( Cctx, Wellformed ) -> CursorLess -> Maybe ( Cctx, Wellformed )
+substitute decomposed sub =
+    let
+        ( cctx, wellformed ) =
+            decomposed
+    in
+    case wellformed of
+        Root_p_CLess _ ->
+            case sub of
+                P_CLess sub0 ->
+                    Just ( cctx, Root_p_CLess sub0 )
+
+                _ ->
+                    Nothing
+
+        Root_s_CLess _ ->
+            case sub of
+                S_CLess sub0 ->
+                    Just ( cctx, Root_s_CLess sub0 )
+
+                _ ->
+                    Nothing
+    ...
+\end{lstlisting}
+\end{minipage}
+
 An editing session of a sample program within the C language in the Elm
 REPL can be seen in \cref{lst:c-repl}. The sample program consists of a function
 declaration for a function called \texttt{main} which has an input
@@ -215,6 +240,10 @@ of the hole at the second child of the assignment operator.
 Applying the \texttt{parent} function to the decomposed tree results in a
 new cursor context and well-formed tree pair, where the cursor has been moved
 to the assignment operator itself, as expected.
+
+Ultimately, the substitution function is demonstrated, where the cursor is
+located at the hole of the assignment operator, which is replaced with
+an \texttt{Int\_CLess} operator containing the value 2.
 
 \begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of C language editor}, label={lst:c-repl}]
 > example = P <|
@@ -248,8 +277,11 @@ Just (Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"]
 Just (Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"],Fundecldone_CLess) Tint_CLess ([Ident_CLess "x"],Block_CLess_cctx1 (Blockstmts_CLess_cctx1 (Compstmt_CLess_cctx1 (Assignment_CLess_cctx1 Cctx_hole Hole_e_CLess) (Return_CLess (Expident_CLess (Ident_CLess "x"))))))),Root_id_CLess (Ident_CLess "x"))
     : Maybe ( Cctx, Wellformed )
 
-TODO: substitution example
+> substitute decomposed (E_CLess (Int_CLess 2))
+Just (Program_CLess_cctx1 (Fundecl1_CLess_cctx4 Tint_CLess ([Ident_CLess "main"],Fundecldone_CLess) Tint_CLess ([Ident_CLess "x"],Block_CLess_cctx1 (Blockstmts_CLess_cctx1 (Compstmt_CLess_cctx1 (Assignment_CLess_cctx2 (Ident_CLess "x") Cctx_hole) (Return_CLess (Expident_CLess (Ident_CLess "x"))))))),Root_e_CLess (Int_CLess 2))
+    : Maybe ( Cctx, Wellformed )
 \end{lstlisting}
+
 
 \section{SQL}
 
@@ -282,7 +314,8 @@ When passed the parseable format, the parser will produce the algebraic data typ
 given in \cref{lst:SQL-adts}, alongside relevant functions for cursor movement (\cref{lst:SQL-movement})
 and substitution (\cref{lst:SQL-sub}).
 
-\begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the SQL language}, label={lst:SQL-adts}]
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the SQL language}, label={lst:SQL-adts}]
 type Q
     = Select Id Id Clause
     | Hole_q
@@ -329,6 +362,9 @@ type Wellformed
     | Root_cond_CLess Cond_CLess
     | Root_exp_CLess Exp_CLess
 \end{lstlisting}
+\end{minipage}
+
+\newpage
 
 \begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the SLQ language}, label={lst:SQL-movement}]
 getCursorPath : List Int -> Base -> List Int
@@ -413,6 +449,34 @@ substitute decomposed sub =
         ...
 \end{lstlisting}
 
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor substitution for the SQL language}, label={lst:SQL-sub}]
+substitute : ( Cctx, Wellformed ) -> CursorLess -> Maybe ( Cctx, Wellformed )
+substitute decomposed sub =
+let
+    ( cctx, wellformed ) =
+        decomposed
+in
+case wellformed of
+    Root_q_CLess _ ->
+        case sub of
+            Q_CLess sub0 ->
+                Just ( cctx, Root_q_CLess sub0 )
+
+            _ ->
+                Nothing
+
+    Root_cmd_CLess _ ->
+        case sub of
+            Cmd_CLess sub0 ->
+                Just ( cctx, Root_cmd_CLess sub0 )
+
+            _ ->
+                Nothing
+    ...
+\end{lstlisting}
+\end{minipage}
+
 Sample editing session in the Elm REPL for the generated SQL editor is
 shown in \cref{lst:SQL-repl}. The sample tree consists of a SQL query
 selecting every column from a table called "table-b" where the the value in
@@ -426,7 +490,8 @@ of the \texttt{Select} operator, as expected. Finally, simple substitution
 is shown where the cursor is encapsulating the root of tree, resulting
 in the substitute being the only element under the updated cursor.
 
-\begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of the SQL editor}, label={lst:SQL-repl}]
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Elm REPL demonstration of the SQL editor}, label={lst:SQL-repl}]
 > example = Q (Select (Ident "col-a") (Ident "table-b") (Where (Greater (Eident (Ident "col-a")) (Econst (Num 2)))))
 Q (Select (Ident "col-a") (Ident "table-b") (Where (Greater (Eident (Ident "col-a")) (Econst (Num 2)))))
     : Base
@@ -446,6 +511,9 @@ Just (Select_CLess_cctx1 Cctx_hole (Ident_CLess "table-b") (Where_CLess (Greater
 Just (Cctx_hole,Root_q_CLess Hole_q_CLess)
     : Maybe ( Cctx, Wellformed )
 \end{lstlisting}
+\end{minipage}
+
+\newpage
 
 \section{\LaTeX}
 
@@ -453,7 +521,9 @@ The syntax for the \LaTeX \ language is given in \cref{ex:as-latex-lang}.
 
 Parseable format for the \LaTeX \ language is given in \cref{lst:latex-bnf}.
 
-\begin{lstlisting}[style=inline, caption={Parseable format of \LaTeX \ language syntax}, label={lst:latex-bnf}]
+
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, caption={Parseable format of \LaTeX \ language syntax}, label={lst:latex-bnf}]
 d in LatexDocument
 e in Environment
 cmd in Command
@@ -468,9 +538,9 @@ d ::= \"\\documentclass{\" id_1 \"}
         # latexdoc
 id ::= %string # ()id # ident[String]
 e ::= \"\\begin{\" id \"}\" c 
-      \"\\end{\" id \"}\" 
-      # (id,c,id)e 
-      # environment
+        \"\\end{\" id \"}\" 
+        # (id,c,id)e 
+        # environment
 cmd ::= \"\\\" id a # (id,a)cmd # command
 a ::= \"{\" c \"}\" # (c)a # argument
 c ::= %string # ()c # textContent[String] 
@@ -480,12 +550,13 @@ c ::= %string # ()c # textContent[String]
     
     
 \end{lstlisting}
+\end{minipage}
 
 When passed the parseable format, the parser will produce the algebraic data types
-given in \cref{lst:latex-adts}, alongside relevant functions for cursor movement (\cref{lst:latex-movement})
-and substitution (\cref{lst:latex-sub}).
+given in \cref{lst:latex-adts}, alongside relevant functions for cursor movement and substitution (\cref{lst:latex-movement}).
 
-\begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the \LaTeX \ language}, label={lst:latex-adts}]
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Generated ADT for the \LaTeX \ language}, label={lst:latex-adts}]
 type D
     = Latexdoc Id E A A (Bind Id B)
     | Hole_d
@@ -525,6 +596,9 @@ type Wellformed
     | Root_c_CLess C_CLess
 
 \end{lstlisting}
+\end{minipage}
+
+\newpage
 
 \begin{lstlisting}[style=inline, language=elm, caption={Generated functions for cursor movement for the \LaTeX language}, label={lst:latex-movement}]
 getCursorPath : List Int -> Base -> List Int
@@ -656,7 +730,8 @@ results in the cursor being moved to the root of the sample tree. Simple
 substitution is shown where if the cursor is at the text content, we can
 replace it with another text content operator with an updated string value.
 
-\begin{lstlisting}[style=inline, language=elm, caption={Editing sessions with the \LaTeX \ editor in the Elm REPl}, label={lst:latex-repl}]
+\begin{minipage}{\textwidth}
+    \begin{lstlisting}[style=inline, language=elm, caption={Editing sessions with the \LaTeX \ editor in the Elm REPl}, label={lst:latex-repl}]
 > example = D (Latexdoc (Ident "article") Hole_a Hole_a ( [ Ident "myenv" ], Cursor_c (TextContent "Hello World!") ))
 D (Latexdoc (Ident "article") Hole_a Hole_a ([Ident "myenv"],Cursor_c (TextContent ("Hello World!"))))
     : Base
@@ -677,3 +752,4 @@ Just (Latexdoc_CLess_cctx1 Cctx_hole Hole_a_CLess Hole_a_CLess ([Ident_CLess "my
 Just (Latexdoc_CLess_cctx4 (Ident_CLess "article") Hole_a_CLess Hole_a_CLess ([Ident_CLess "myenv"],Cctx_hole),Root_c_CLess (TextContent_CLess ("Updated content")))
     : Maybe ( Cctx, Wellformed )
 \end{lstlisting}
+\end{minipage}

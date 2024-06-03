@@ -36,7 +36,7 @@
 
 \section{Background}
 
-Structure editors provide a way to manipulate some program's abstract syntax structure directly, in contrast to writing and editing a program's source code in plain-text, which also requires a parser to produce an abstract syntax tree. An early example of a proposed structure editor is the Cornell Program Synthesizer\cite{cornell} from 1981.
+Structure editors provide a way to manipulate some program's abstract syntax structure directly, in contrast to writing and editing the source code of a program in plain-text, which also requires a parser to produce an abstract syntax tree. An early example of a proposed structure editor is the Cornell Program Synthesizer\cite{cornell} from 1981.
 
 However structure editors like the Cornell Program Synthesizer\cite{cornell} allow programmers to create syntactically ill-formed programs. This includes introducing use-before-declaration statements, as the editor cannot manage context-sensitive constraints within the syntax.
 
@@ -49,7 +49,7 @@ A common property of the editor calculi and editors mentioned until now is that 
 To tackle this problem, one can draw inspiration from the Centaur system\cite{centaur} that is able to take a language syntax described in the Metal language as input and generate a structure-oriented editor. However the system lacks a dedicated type-safe editor calculus. Such a type-safe generalized editor calculus has been proposed by \cite{missing ref}.
 
 \section{Problem statement}
-There is currently no implementation of a type-safe generalized structure editor, based on the proposed type-safe generalized structure editor calculus. 
+There is currently no implementation of a type-safe generalized structure editor, based on the proposed type-safe generalized structure editor calculus.
 \\
 
 This project will investigate the gap between type-safe structure editors and type-safe generalized structure editors, by implementing the latter. A generalized editor is generalized in the sense that it is able to manipulate any language, not limited to programming languages, given the syntax as input. The editor should be supported by a meta-language that can describe any instance of the editor. This meta-language could be a typed lambda-calculus, which is also used by the authors of the proposed editor calculus.
@@ -63,7 +63,7 @@ This project also has the intention of narrowing down the problem and become mor
     \item Determine the criteria for implementing a type-safe structure editor
     \item Design a type-safe generalized structure editor
     \item Implement a type-safe generalized structure editor in a functional programming language
-    \item Evaluate the type-safe generalized structure editor 
+    \item Evaluate the type-safe generalized structure editor
 \end{itemize}
 
 \section{Requirements for a successful implementation}

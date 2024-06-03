@@ -20,6 +20,10 @@ The specification language is chosen to expect some syntactic categories followe
 Every syntactic category is represented by one or more non-terminals with a term, arity and operator name. The term might refer to other syntactic categories or its own. Each term is the concrete syntax of an operator, while the arity, in combination with the operator name, is a concise representation of the abstract syntax of an operator.
 The abstract syntax only makes use of the defined syntactic categories and, inspired by Harper\cite{harper}, binders can be specified in the arity description with a dot ('.'), e.g. $x.s$ specifies that variable $x$ is bound within the scope of $s$.
 
+Meta-variables can be represented in the concrete syntax (term) with a percentage sign ('\%') followed by a string, e.g. '\%int' represents any integer. The operator
+names can also be supplied with type information, e.g. an operator named
+\texttt{num} can be followed by \texttt{[Int]}, resulting in \texttt{num[Int]}, to specify that it represents a number of type Int. This can later be used in source code generation to allow for passing concrete values of given type to the operator. But this only applies for operators of arity $()x$, where $x$ is any sort.
+
 % The specification language itself can be described with BNF notation (with some informal notation for newlines and strings), as seen in figure \cref{fig:spec-lang-bnf}.
 
 % \begin{myfigure}{Description of the specification language itself}{spec-lang-bnf}
@@ -40,8 +44,87 @@ The abstract syntax only makes use of the defined syntactic categories and, insp
 
 From this specification language, it is possible to extract what is assumed by the generalized editor calculus\cite{aalborg}. The set of sorts $\mathcal{S}$ is the set of syntactic categories. For example, a syntactic category $e \in Exp$ can get parsed into a sort $s_{e}$.
 The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BNF notation since each derivation rule represents an operator with a specified arity.
+\begin{example}{Syntax of a small SQL language}{ex:as-sql-lang}
+  Following is a specification of a subset of the PostgreSQL\cite{postgresql-about} language, per the specification language
 
-\begin{example}{Syntax of a small C language}{ex:c-spec}
+
+  \[
+    \begin{aligned}
+       & \textit{q} \in \textit{Query}                                                       \\
+       & \textit{cmd} \in \textit{Command}      \quad & \textit{id} \in \textit{Id}          \\
+       & \textit{const} \in \textit{Const}      \quad & \textit{clause} \in \textit{Clause}  \\
+       & \textit{cond} \in \textit{Condition}   \quad & \textit{exp} \in \textit{Expression} \\
+    \end{aligned}
+  \]
+  \\
+  \[
+    \begin{aligned}
+       & \text{Sort} &  & \text{Term}                     &   & \text{Arity}            &  & \text{Operator} \\
+       & query ::=   &  & \text{"SELECT " $id_1$}         &   & (id_1,id_2,clause)query &  & select          \\
+       &             &  & \text{" FROM " $id_2$ $clause$}                                                    \\
+       & cmd ::=     &  & \text{"INSERT INTO " $id_1$}    &   & (id_1,id_2.query)cmd    &  & insert          \\
+       &             &  & \text{" AS " $id_2$ $query$}    &                                                  \\
+       & id ::=      &  & \text{\%string}                 &   & ()id                    &  & id[String]      \\
+       & const ::=   &  & \text{\%number}                 &   & ()const                 &  & num[Int]        \\
+       & \quad |     &  & \text{"'" id "'"}               &   & (id)const               &  & str             \\
+       & clause ::=  &  & \text{"WHERE " $cond$}          &   & (cond)clause            &  & where           \\
+       & \quad |     &  & \text{"HAVING " $cond$}         &   & (cond)clause            &  & having          \\
+       & cond ::=    &  & \text{$exp_1$ "$>$" $exp_2$}    &   & (exp_1,exp_2)cond       &  & greater         \\
+       & \quad |     &  & \text{$exp_1$ "=" $exp_2$}      &   & (exp_1,exp_2)cond       &  & equals          \\
+       & exp ::=     &  & \text{$const$}                  &   & (const)exp              &  & econst          \\
+       & \quad |     &  & \text{$id$}                     &   & (id)exp                 &  & eident          \\
+    \end{aligned}
+  \]
+
+
+  The $id[String]$ and $num[Int]$ operators represent meta-variables and can be used to represent concrete values of the given type in Elm.
+
+  This subset is chosen as it can represent simple select queries and insert commands.
+
+  Notably, a binder is used in the $insert$ operator, where the alias of $id_1$, specified as $id_2$ is bound within the sub-query.
+\end{example}
+\newpage
+
+\begin{example}{Syntax of a small \LaTeX language}{ex:as-latex-lang}
+  Below is the syntax of a subset of the \LaTeX language:
+  \[
+    \begin{aligned}
+       & \textit{d} \in \textit{Document}    \quad & \textit{e} \in \textit{Environment} \\
+       & \textit{cmd} \in \textit{Command}   \quad & \textit{a} \in \textit{Argument}    \\
+       & \textit{id} \in \textit{Identifier} \quad & \textit{c} \in \textit{Content}     \\
+    \end{aligned}
+  \]
+  \\
+  \[
+    \begin{aligned}
+       & \text{Sort} &  & \text{Term}                             &  & \text{Arity}   &  & \text{Operator}     \\
+       & d ::=       &  & \text{"\bs documentclass\{" $id$ "\}"}  &  & (id,a,a,id.c)d &  & document            \\
+       &             &  & \text{"\bs newenvironment\{" $id$ "\}"} &  &                &  &                     \\
+       &             &  & \text{$a_1$} \textit{$a_2$}             &  &                &  &                     \\
+       &             &  & \text{"\bs begin\{document\}" $c$}      &  &                &  &                     \\
+       &             &  & \text{"\bs end\{document\}"}            &  &                &  &                     \\
+       & id ::=      &  & \text{\%string}                         &  & ()id           &  & ident[String]       \\
+       & e ::=       &  & \text{"\bs begin\{" $id$ "\}" $c$}      &  & (id,c,id)e     &  & environment         \\
+       &             &  & \text{ "\bs end\{" $id$ "\}"}           &  &                &  &                     \\
+       & cmd ::=     &  & \text{"\bs " $id$ $a$}                  &  & (id,a)cmd      &  & command             \\
+       & a ::=       &  & \text{"\{" $c$ "\}"}                    &  & (c)a           &  & argument            \\
+       & c ::=       &  & \text{\%text}                           &  & ()c            &  & textContent[String] \\
+       & \quad |     &  & \textit{cmd}                            &  & (cmd)c         &  & cmdContent          \\
+       & \quad |     &  & \textit{e}                              &  & (e)c           &  & envContent          \\
+       & \quad |     &  & \textit{c } \textit{c}                  &  & (c,c)c         &  & seqContent          \\
+    \end{aligned}
+  \]
+  '\%text' and '\%identifier' are meta-variables representing any parseable text and identifier in the LaTeX language.
+
+  This subset is chosen as it can represent a minimal LaTeX document with an environment
+  definition, where the name of the environment is bound within the body
+  of the document to demonstrate the use of binders in the abstract syntax.
+
+  The $ident[String]$ and $textContent[String]$ operators represent meta-variables and can be used to represent concrete values of the given type in Elm.
+\end{example}
+\newpage
+
+\begin{example}[breakable]{Syntax of a small C language}{ex:c-spec}
   Following is a specification of a subset of the C language\cite{c-iso-standard}, per the described specification language.
   \[
     \begin{aligned}
@@ -88,7 +171,8 @@ The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BN
     \end{aligned}
   \]
 
-  '\%int', '\%char', '\%string' and '\%bool' are meta-variables representing any parseable integer, character, sequence of characters and boolean constant by the C language.
+
+  The $cint[Int]$, $cchar[Char]$, $cbool[Bool]$ and $ident[String]$ operators represent meta-variables and can be used to represent concrete values of the given type in Elm.
 
   This subset is chosen as it can represent a C program consisting of only function declarations at the top level, where one of them might represent a \texttt{main} function, the entry point of a C program. The identifier of a function declaration is bound within the following function declarations (e.g. $id_1$ is bound within $\textit{fd}$ in the $\textit{fundecl1}$ operator).
 
@@ -97,87 +181,20 @@ The family of arity-indexed operators $\mathcal{O}$ can be extracted from the BN
   Another limitation, or something that might seem unnecessary, is having the $blockdone$ and $fundecldone$ operators. They are necessary to allow for a block to end with a $vardecl$ operator and to end a sequence of function declarations with the $fundecl1$ or $fundecl2$ operator. This a pattern that allows operators to bind identifiers within the following terms.
 
 \end{example}
-\begin{example}{Syntax of a small SQL language}{ex:as-sql-lang}
-  Below is the syntax of a subset of the PostgreSQL\cite{postgresql-about} dialect of SQL:
-  \[
-    \begin{aligned}
-       & \textit{q} \in \textit{Query}                                                       \\
-       & \textit{cmd} \in \textit{Command}      \quad & \textit{id} \in \textit{Id}          \\
-       & \textit{const} \in \textit{Const}      \quad & \textit{clause} \in \textit{Clause}  \\
-       & \textit{cond} \in \textit{Condition}   \quad & \textit{exp} \in \textit{Expression} \\
-    \end{aligned}
-  \]
-  \\
-  \[
-    \begin{aligned}
-       & \text{Sort} &  & \text{Term}                     &   & \text{Arity}            &  & \text{Operator} \\
-       & query ::=   &  & \text{"SELECT " $id_1$}         &   & (id_1,id_2,clause)query &  & select          \\
-       &             &  & \text{" FROM " $id_2$ $clause$}                                                    \\
-       & cmd ::=     &  & \text{"INSERT INTO " $id_1$}    &   & (id_1,id_2.query)cmd    &  & insert          \\
-       &             &  & \text{" AS " $id_2$ $query$}    &                                                  \\
-       & id ::=      &  & \text{\%string}                 &   & ()id                    &  & id              \\
-       & const ::=   &  & \text{\%number}                 &   & ()const                 &  & num             \\
-       & \quad |     &  & \text{" '\%string' "}           &   & ()const                 &  & str             \\
-       & clause ::=  &  & \text{"WHERE " $cond$}          &   & (cond)clause            &  & where           \\
-       & \quad |     &  & \text{"HAVING " $cond$}         &   & (cond)clause            &  & having          \\
-       & cond ::=    &  & \text{$exp_1$ "$>$" $exp_2$}    &   & (exp_1,exp_2)cond       &  & greater         \\
-       & \quad |     &  & \text{$exp_1$ "=" $exp_2$}      &   & (exp_1,exp_2)cond       &  & equals          \\
-       & exp ::=     &  & \text{$const$}                  &   & (const)exp              &  & econst          \\
-       & \quad |     &  & \text{$id$}                     &   & (id)exp                 &  & eident          \\
-    \end{aligned}
-  \]
-  where '\%string' and '\%number' and '\%char' are placeholders for any parsable sequence of characters and numbers by the PostgreSQL language.
+\newpage
 
-  This subset is chosen as it can represent simple select queries and insert commands.
+\begin{minipage}{\textwidth}
+  To make the specification language parseable, a more computer-friendly format is
+  presented in \cref{lst:spec-lang-bnf} in BNF-form. Every syntactic category is
+  expected on its own line, followed by a blank line and all derivations.
+  Each derivation is expected to be a syntactic category, followed by '::=' and
+  every term (which acts as the concrete syntax of an operator), arity and operator
+  name, separated with a vertical bar '$|$'. Every term, arity and operator are separated
+  with a number-sign '\#'.
+\end{minipage}
 
-  Notably, a binder is used in the $insert$ operator, where the alias of $id_1$, specified as $id_2$ is bound within the sub-query.
-\end{example}
-
-\begin{example}{Syntax of a small \LaTeX language}{ex:as-latex-lang}
-  Below is the syntax of a subset of the \LaTeX language:
-  \[
-    \begin{aligned}
-       & \textit{d} \in \textit{Document}    \quad & \textit{e} \in \textit{Environment} \\
-       & \textit{cmd} \in \textit{Command}   \quad & \textit{a} \in \textit{Argument}    \\
-       & \textit{id} \in \textit{Identifier} \quad & \textit{c} \in \textit{Content}     \\
-    \end{aligned}
-  \]
-  \\
-  \[
-    \begin{aligned}
-       & \text{Sort} &  & \text{Term}                             &  & \text{Arity}   &  & \text{Operator}     \\
-       & d ::=       &  & \text{"\bs documentclass\{" $id$ "\}"}  &  & (id,a,a,id.c)d &  & document            \\
-       &             &  & \text{"\bs newenvironment\{" $id$ "\}"} &  &                &  &                     \\
-       &             &  & \text{$a_1$} \textit{$a_2$}             &  &                &  &                     \\
-       &             &  & \text{"\bs begin\{document\}" $c$}      &  &                &  &                     \\
-       &             &  & \text{"\bs end\{document\}"}            &  &                &  &                     \\
-       & id ::=      &  & \text{\%string}                         &  & ()id           &  & ident[String]       \\
-       & e ::=       &  & \text{"\bs begin\{" $id$ "\}" $c$}      &  & (id,c,id)e     &  & environment         \\
-       &             &  & \text{ "\bs end\{" $id$ "\}"}           &  &                &  &                     \\
-       & cmd ::=     &  & \text{"\bs " $id$ $a$}                  &  & (id,a)cmd      &  & command             \\
-       & a ::=       &  & \text{"\{" $c$ "\}"}                    &  & (c)a           &  & argument            \\
-       & c ::=       &  & \text{\%text}                           &  & ()c            &  & textContent[String] \\
-       & \quad |     &  & \textit{cmd}                            &  & (cmd)c         &  & cmdContent          \\
-       & \quad |     &  & \textit{e}                              &  & (e)c           &  & envContent          \\
-       & \quad |     &  & \textit{c } \textit{c}                  &  & (c,c)c         &  & seqContent          \\
-    \end{aligned}
-  \]
-  '\%text' and '\%identifier' are meta-variables representing any parseable text and identifier in the LaTeX language.
-
-  This subset is chosen as it can represent a minimal LaTeX document with an environment
-  definition, where the name of the environment is bound within the body
-  of the document to demonstrate the use of binders in the abstract syntax.
-\end{example}
-
-To make the specification language parseable, a more computer-friendly format is
-presented in \cref{lst:spec-lang-bnf} in BNF-form. Every syntactic category is
-expected on its own line, followed by a blank line and all derivations.
-Each derivation is expected to be a syntactic category, followed by '::=' and
-every term (which acts as the concrete syntax of an operator), arity and operator
-name, separated with a vertical bar '|'. Every term, arity and operator are separated
-with a number-sign '\#'. See figure \cref{fig:sql-lang-parseable} for an example.
-
-\begin{lstlisting}[style=inline,caption=The specification language itself in BNF-form,label=lst:spec-lang-bnf]
+\begin{minipage}{\linewidth}
+  \begin{lstlisting}[style=inline,caption=The specification language itself in BNF-form,label=lst:spec-lang-bnf]
 <syntax> ::= <synCatList> "\n\n" <synCatRulesList>
 
 <synCatList> ::= <synCat> "\n" <synCatList> | <synCat>
@@ -203,9 +220,10 @@ with a number-sign '\#'. See figure \cref{fig:sql-lang-parseable} for an example
 <separator> ::= "," | "."
 <operator> ::= %string
 \end{lstlisting}
+\end{minipage}
 
-\begin{myfigure}{Subset of syntax of a small SQL language in a parseable format}{fig:sql-lang-parseable}
-  \begin{lstlisting}[style=figurestyle]
+\begin{example}{Subset of syntax of a small SQL language in a parseable format}{fig:sql-lang-parseable}
+  \begin{lstlisting}[style=examplestyle]
 query in Query
 cmd in Command
 id in Id
@@ -213,9 +231,10 @@ clause in Clause
 
 query ::= " SELECT " id " FROM " id clause # (id,id,clause)query # select
 cmd ::= " INSERT INTO " id " AS " id query # (id,id.query)cmd # insert
+...
 \end{lstlisting}
+\end{example}
 
-\end{myfigure}
 
 \subsection{Code generation versus generic model}
 
@@ -229,7 +248,8 @@ type (referred to as \texttt{type} in Elm and \texttt{data} in Haskell).
 This ensures that only well-formed terms can be represented using the algebraic
 data types.
 
-However, opting for this method might require automatic updates to both the
+However, opting for this method might require automatic generation or
+updates to both the
 definitions and signatures of some functions.
 This presents a challenge in ensuring that these functions maintain their intended
 behavior after the updates.
@@ -253,35 +273,7 @@ type FunDecls
     = FunDecl1 Type (Bind Id FunDecls) Type (Bind Id Block)
     | FunDecl2 Type (Bind Id FunDecls) Type (Bind Id (Bind Id Block))
     | FunDeclDone
-type Statement
-    = Assignment Id Exp
-    | StmtFunCall Id Funargs
-    | Return Exp
-    | Conditional Conditional
-type Funargs
-    = ArgSingle Funarg
-    | ArgCompound Funargs Funarg
-type Funarg
-    = Funarg Type Id
-type Conditional
-    = IfElse Exp Block Block
-type Statements
-    = SSingle Statement
-    | SCompound Statements Statement
-type Type
-    = TInt
-    | TChar
-    | TBool
-type Exp
-    = Num
-    | Char
-    | Bool
-    | Plus Exp Exp
-    | Equals Exp Exp
-    | ExpFunCall Id Funargs
-    | ExpId Id
-type Id
-    = Ident String
+...
 \end{lstlisting}
 
   The $Bind$ type alias is simply a tuple of 2 given type variables,
@@ -290,9 +282,16 @@ type Id
   sort to be bound.
 \end{example}
 
-In contrast, a generic solution without the need for generating new source reduces the risk of syntax errors in the target language for the editor itself. A generic solution involves designing a model capable of holding the necessary information from any syntax. An approach for this is provided in \cref{lst:elm-ex}. However, this approach requires additional well-formedness checks on any given term concerning the syntax.
+In contrast, a generic solution without the need for generating new source reduces the risk of syntax errors in the target language for the editor itself. A generic solution might involve designing a model capable of holding the necessary information from any syntax. An approach for this is provided in \cref{lst:elm-ex}.
+The arity in the Operator type is a tuple, where the first entry is a potential
+list of identifiers bound within the term in the second element of the tuple.
+In Haskell, this corresponds to named fields\cite{haskell-records-named-fields},
+which have a very similar syntax.
 
-\begin{lstlisting}[style=inline,caption={Elm Records for storing syntax information},label={lst:elm-ex}]
+However, this approach requires additional well-formedness checks on any given term concerning the syntax.
+
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[style=inline,caption={Elm Records for storing syntax information},label={lst:elm-ex}]
 type alias Syntax =
 { synCats : [String]
 , operators : [Operator]
@@ -304,12 +303,7 @@ type alias Operator =
 , concSyn : String
 }
 \end{lstlisting}
-
-The arity in the Operator type is a tuple, where the first entry is a potential
-list of identifiers bound within the term in the second element of the tuple.
-
-In Haskell, this corresponds to named fields\cite{haskell-records-named-fields},
-which have a very similar syntax.
+\end{minipage}
 
 The implementation will proceed with automatic generation of source code,
 including algebraic data types, due to their advantage in handling ill-formed
@@ -358,19 +352,23 @@ Elm Codegen to produce source files for the editor.
 More specifically, the implementation will use the built-in \texttt{Parser} Elm
 library to parse a \texttt{RawSyntax} object (\cref{lst:raw-syntax-model}),
 which is a direct representation of the syntax as specified in the specification
-language (\cref{fig:spec-lang-bnf}).
+language (\cref{lst:spec-lang-bnf}). The \texttt{RawSyntax} represents
+the collection of syntactic categories \texttt{RawSyncat} and
+\texttt{RawSynCatOps}, where the latter contains a list of operators
+\texttt{RawOp} for each syntactic category.
 
-\begin{lstlisting}[
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[
         language=elm,
         style=inline,
         caption={Raw syntax model in Elm},
         label={lst:raw-syntax-model}]
 type alias RawSyntax =
     { synCats : List RawSynCat
-    , synCatRules : List RawSynCatRules
+    , synCaOps : List RawSynCatOps
     }
 
-type alias RawSynCatRules =
+type alias RawSynCatOps =
     { synCat : String
     , operators : List RawOp
     }
@@ -386,15 +384,17 @@ type alias RawSynCat =
     , set : String
     }
 \end{lstlisting}
+\end{minipage}
 
 If parsing of the raw syntax is successful, the raw model will
 be transformed into a separate model built around the \texttt{Syntax}
 type alias (\cref{lst:syntax-model}).
 Transformations include converting the string-representation of the arity
 into its own \texttt{Arity} type, which is a simple list of tuples,
-where the first element is a list of variables to be bound within the second element.
+where the first element is a list of variables to be bound within the second element (line 31-32 in \cref{lst:syntax-model}).
 
-\begin{lstlisting}[language=elm,style=inline,caption={Syntax model},label={lst:syntax-model}]
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[language=elm,style=inline,caption={Syntax model},label={lst:syntax-model}]
 type alias Syntax =
     { synCats : List SynCat
     , synCatOps : List SynCatOps
@@ -428,6 +428,7 @@ type alias Term =
 type alias Arity =
     List ( List String, String )
 \end{lstlisting}
+\end{minipage}
 
 Having all expected sets of sorts and family of operators,
 i.e. the abstract syntax extended with $hole$ and $cursor$ operator $\mathcal{S},
@@ -466,7 +467,8 @@ type Statement
 \subsection{Editor expressions}
 
 Having generated all sorts and operators as algebraic data types in Elm,
-the next step is to implement functionality for manipulating trees.
+the next step is to implement functionality for manipulating the algebraic
+data types, representing abt's in editor.
 In terms of the editor calculus\cite{aalborg},
 manipulating an abt involves editor expressions $E \in Edt$ (\cref{fig:as-editor}),
 which include atomic prefix commands $\pi \in Apc$ for abt traversal
@@ -477,7 +479,7 @@ respect to modal logic within the encapsulated abt.
 
 All editor expressions assume a well-formed abt, which is a tree
 with exactly one cursor, which cannot be guaranteed by the generated
-algebraic data types, as every sort has an associated cursor operator.
+algebraic data types for sorts $\mathcal{O}$, as every sort has an associated cursor operator.
 
 However, these operations rely on a well-formed abt, which is given
 by decomposing an abt $a$ into $C[\dot{a}]$, where $C$ is a
@@ -491,18 +493,19 @@ In other words, it does not make sense to decompose an abt of some sort which
 cannot be derived to a well-formed program.
 This aspect has not been considered yet, and as a temporary solution,
 a type wrapper called \texttt{Base} has been introduced, which has an entry for
-every syntactic category in the given syntax. For example, see \cref{lst:base-ex}
-for an excerpt of the \texttt{Base} type generated for the C language in
-\cref{ex:c-spec}.
+every syntactic category in the given syntax.
 
-\begin{lstlisting}[language=elm,style=inline,caption={Example of the Base type},label={lst:base-ex}]
+\begin{example}{Example of the Base type for the C language}{ex:c-spec}
+  \begin{lstlisting}[language=elm,style=examplestyle]
 type Base
     = Prog Prog
     | Block Block
     | BlockItems BlockItems
     | VarDecls VarDecls
     | FunDecls FunDecls
+...
 \end{lstlisting}
+\end{example}
 
 This allows for any operator
 of any sort to be decomposed, although the ideal solution would be having
@@ -512,7 +515,7 @@ The generalized editor calculus\cite{aalborg} defines well-formed trees as abt's
 with exactly one cursor either as the root or as an argument of the root.
 However, this definition, in conjunction with the cursor context definition,
 leads to multiple valid decompositions for an abt in certain scenarios,
-which is also mentioned in \cite{aalborg}. This can occur when the cursor is located
+which is also mentioned in the Aalborg project\cite{aalborg}. This can occur when the cursor is located
 at one of the immediate children of the root. In that case, the cursor context
 can be interpreted as either the tree where the cursor has been replaced with a
 context hole, or it can be interpreted as an empty context.
@@ -542,6 +545,9 @@ into following sub-tasks:
         when generating the cursor context
 \end{itemize}
 
+The next section will explain in more details how the steps above can be done,
+and how we always get a unique decomposition, as long as the abt to be decomposed is well-formed.
+
 This way of decomposing an abt always places the cursor at the root of the
 well-formed tree. This makes it impossible for the cursor to encapsulate the immediate
 child of the root, making the property 3 in the definition of well-formed trees
@@ -549,9 +555,6 @@ child of the root, making the property 3 in the definition of well-formed trees
 has been revised to only generate an operator of arity $(\hat{s})\dot{s}$ (property 4),
 representing that the cursor only encapsulates the root of a cursorless abt
 of sort $\hat{s}$.
-
-The following will explain in more details how the steps above can be done,
-and how we always get a unique decomposition, as long as the abt to be decomposed is well-formed.
 
 \subsubsection{Cursor path}
 
@@ -592,7 +595,8 @@ to generate a case expression for every syntactic category in the given syntax.
 See \cref{ex:cursor-path-c} for an excerpt of the generated \texttt{getCursorPath}
 function for the small C language (\cref{ex:c-spec}).
 
-\begin{lstlisting}[language=elm,style=inline,caption={getCursorPath function generator},label={lst:cursor-path-fun-gen}]
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[language=elm,style=inline,caption={getCursorPath function generator},label={lst:cursor-path-fun-gen}]
 createGetCursorPath : Syntax -> Elm.Declaration
 createGetCursorPath syntax =
     Elm.declaration "getCursorPath" <|
@@ -613,6 +617,7 @@ createGetCursorPath syntax =
                 )
             )    
 \end{lstlisting}
+\end{minipage}
 
 \begin{example}{Generated cursor path finder function}{ex:cursor-path-c}
   Following is an excerpt of the generated \texttt{getCursorPath} function
@@ -671,10 +676,11 @@ followed to locate the cursor. This is also done by performing pre-order travers
 of the tree, but it will stop when the cursor is reached (i.e. when the
 cursor path is empty) and replace the operator reached with the
 context hole operator $[ \ \cdot \ ] \in C$. The rest of the tree which has not
-been traversed will be passed to the next step, generating the well-formed tree.
+been traversed will be passed to the next step, building the well-formed tree.
 See \cref{lst:cursor-ctx-pseudocode} for pseudocode demonstrating this process.
 
-\begin{lstlisting}[caption={Pseudocode for generating cursor context}
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[caption={Pseudocode for building cursor context}
   ,label={lst:cursor-ctx-pseudocode}
   ,style=inline
   ]
@@ -716,14 +722,16 @@ toCLess op =
                 (toCLess op.args[1]) 
                 (toCLess op.args[2])
 \end{lstlisting}
+\end{minipage}
 
-Functions supporting this are generated by Elm CodeGen, and can be seen in
+Functions supporting building cursor contexts are generated by Elm CodeGen, and can be seen in
 \cref{lst:to-cc-fun-gen}, where a \texttt{toCCtx} function is generated
 for the \texttt{Base} type in conjunction with a
 \texttt{toCCtx\_s} for every $s$ syntactic category in the given syntax, where
 the algorithm described above is implemented for every sort.
 
-\begin{lstlisting}[language=elm
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[language=elm
     ,style=inline
     ,caption={toCCtx function generator}
     ,label={lst:to-cc-fun-gen}
@@ -763,19 +771,21 @@ createToCCtxFuns syntax =
         )
   ]
 \end{lstlisting}
+\end{minipage}
 
 \subsubsection{Well-formed tree}
 
 The well-formed tree is generated by performing pre-order traversal of the
 rest of the tree that was not traversed when generating the cursor context.
-This is done by first replacing the cursor with the well-formed operator
+This is done by first replacing the cursor operator $o \in \mathcal{O}$ with the well-formed operator
 $\dot{o} \in \dot{\mathcal{O}}$ of arity $(\hat{s})\dot{s}$ indicating that the
-cursor encapsulates the root of a cursorless abt of sort $\hat{s}$.
+cursor encapsulates a cursorless abt of sort $\hat{s}$, being the cursorless equivalent of the child of $o$.
 After this, the rest of the tree is traversed, and every operator $o \in \mathcal{O}$
 is replaced with its corresponding cursorless operator $\hat{o} \in \hat{\mathcal{O}}$.
 See \cref{lst:wf-tree-pseudocode} for pseudocode demonstrating this process.
 
-\begin{lstlisting}[caption={Pseudocode for generating well-formed tree},label={lst:wf-tree-pseudocode}, style=inline]
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[caption={Pseudocode for generating well-formed tree},label={lst:wf-tree-pseudocode}, style=inline]
 toWellformed op =
   let op = consumeCursor op
   in
@@ -793,11 +803,13 @@ consumeCursor op =
     Cursor under -> under
     _ -> op
 \end{lstlisting}
+\end{minipage}
 
 Like when generating functions supporting cursor context, a very similar approach
 is taken here, and can be seen in listing \cref{lst:to-wf-fun-gen}.
 
-\begin{lstlisting}[language=elm
+\begin{minipage}{\textwidth}
+  \begin{lstlisting}[language=elm
     ,style=inline
     ,caption={toWellFormed function generator}
     ,label={lst:to-wf-fun-gen}
@@ -839,6 +851,7 @@ createToWellFormedFun syntax =
                 )
           )
 \end{lstlisting}
+\end{minipage}
 
 The cursor context and well-formed tree pair as defined above will decompose
 any well-formed abt into a unique pair of a cursor context and a well-formed tree.
@@ -860,9 +873,6 @@ operator contains the new context hole. The new well-formed tree is built by
 wrapping the $i$th argument of the cursorless operator current root operator
 in the well-formed tree.
 
-For moving to the parent of the cursor, a \texttt{parent} function is generated
-which takes a decomposed tree and returns a new decomposed tree where the cursor
-
 For a visualization of this, see \cref{fig:movement-example} showing the result
 of applying various \texttt{child} operations to a decomposed tree.
 Pseudocode explaining the overall algorithm is provided in
@@ -870,21 +880,21 @@ Pseudocode explaining the overall algorithm is provided in
 
 \begin{figure}[H]
   \centering
-  \begin{subfigure}[b]{0.65\textwidth}
+  \begin{subfigure}[b]{0.9\textwidth}
     \centering
     \includegraphics[width=\textwidth]{img/slq-decomp-only.drawio.png}
     \caption{Decomposition of a small SQL program}
     \label{subfig:decomp-only}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.65\textwidth}
+  \begin{subfigure}[b]{0.9\textwidth}
     \centering
     \includegraphics[width=\textwidth]{img/sql-child1.drawio.png}
     \caption{Applying the \texttt{Child-1} operation}
     \label{subfig:child1}
   \end{subfigure}
   \hfill
-  \begin{subfigure}[b]{0.65\textwidth}
+  \begin{subfigure}[b]{0.9\textwidth}
     \centering
     \includegraphics[width=\textwidth]{img/sql-child2.drawio.png}
     \caption{Applying the \texttt{Child-2} operation}
@@ -893,7 +903,6 @@ Pseudocode explaining the overall algorithm is provided in
   \caption{Example of cursor movement}
   \label{fig:movement-example}
 \end{figure}
-
 
 \begin{lstlisting}[style=inline,caption={Pseudocode for applying child operator},label={lst:cursor-movement-pseudocode}]
 child(i, (cctx, wellformed)) =
@@ -950,9 +959,9 @@ replaceCCtxHole cctx i underCursor =
     ...
 \end{lstlisting}
 
-This has been implemented by generating a \texttt{child} function which
+This has been implemented by having Elm CodeGen generate a \texttt{child} function which
 takes an integer $i$ and a decomposed tree, and returns a new cursor context
-and well-formed tree pair.
+and well-formed tree pair, where the cursor has been moved to the $i$th child.
 
 \subsubsection{Cursor movement - Parent}
 
@@ -961,7 +970,7 @@ by moving the context hole a level up, such that the parent of the context hole
 becomes the new context hole. Then, the parent of the cursor context which has
 been updated (operator of sort $\mathcal{S}^C$) is inserted as its equivalent
 well-formed operator (operator of sort $\dot{\mathcal{S}}$) at the root of the
-well-formed tree.
+well-formed tree, where the prior root of the well-formed tree becomes an argument to the new root operator.
 
 To visualize this, consider the example already given for the \texttt{child} operations, but where applying the \texttt{Parent} operation to the tree in \cref{subfig:child2} would result in the tree in \cref{subfig:decomp-only}.
 
@@ -1042,9 +1051,28 @@ abt of the same sort, ensuring that well-formedness is maintained.
 This is defined as the \texttt{Insert-op} operation in the editor calculus
 (\cref{fig:red-rules-sub}).
 
-In order to implement this, a function
+For this a \texttt{substitution} function is generated by Elm CodeGen, which
+takes a decomposed tree and a new cursorless operator, and returns a new
+decomposed tree where the cursor has been replaced with the new operator,
+if substitution is valid. See \cref{lst:substitution-pseudocode} for pseudocode
+demonstrating this process and \cref{fig:sub-example} for an illustration of
+the substitution operation.
 
-For this a \texttt{substitution} function is generated
+\begin{lstlisting}[style=inline,caption={Pseudocode for substitution operator},label={lst:substitution-pseudocode}]
+substitution(sub, (cctx, wellformed)) =
+  case wellformed of
+    Root_SortX underCursor ->
+      case sub of
+        CursorLess_SortX sub_ ->
+          (cctx, Root_SortX sub_)
+        _ -> error "invalid substitution"
+    Root_SortY underCursor ->
+      case sub of
+        CursorLess_SortY sub_ ->
+          (cctx, Root_SortY sub_)
+        _ -> error "invalid substitution"
+    ...
+\end{lstlisting}
 
 \subsubsection{Conditional expressions, Sequence, Recursion and Context}
 
@@ -1062,11 +1090,16 @@ but it is entirely possible by generating functions for each of the
 conditional operators, which would take a decomposed tree and return a boolean
 value based on the modal logic of the encapsulated abt.
 
-Like conditional expressions, sequence, recursion and context operators
-have not been implemented in this project.
+Like conditional expressions, sequence and recursion operators
+have not been implemented yet in this project.
 
-\subsubsection{Making the functionality generic}
-% TODO: write a smooth transition
+In other words, given the current state of the implementation, $\pi.nil$ is the only supported expression in the editor calculus (\cref{fig:as-editor}).
+
+\subsubsection{Generic implementation}
+Given the generic nature of the editor calculus, the implementation could
+benefit from type classes, which would allow for more general functions
+to be written, without the need for explicit references to specific
+function implementations for different sorts.
 
 For example, consider the cursor substitution operator (\cref{fig:red-rules-sub}),
 where the editor calculus enforces that operators can only be substituted
@@ -1085,7 +1118,6 @@ Elm package\cite{elm-typeclass-package}.
 An example of such a simulation is shown in \cref{lst:elm-typeclass}.
 This typeclass simulation in Elm has the disadvantage of forcing an explicit
 reference to the typeclass "instance" in a generic function, in contrast to Haskell.
-This leads to more verbose code and more source code generation.
 
 % TODO: replace this with a more interesting example, i.e. conditionals
 \begin{lstlisting}[language=Haskell,style=inline,caption={Haskell typeclass example},label={lst:haskell-typeclass}]
@@ -1117,3 +1149,7 @@ doIntSub : Int
 doIntSub =
     substitute substituteAny 1 2
 \end{lstlisting}
+
+Unfortunately, this leads to more verbose code and it does not solve the rigid source code generation, since direct references to the typeclass "instance" is needed, which are made out of manipulated strings (although with assistance from the Elm CodeGen package). In other words, this
+does not provide any benefits over referring to a concrete function for
+each sort, which is the current approach.
