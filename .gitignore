@@ -1,1 +1,9 @@
 out/
+*.log
+*.toc
+*.gz
+*.xml
+*.aux
+*.bbl
+*.bcf
+*.out
