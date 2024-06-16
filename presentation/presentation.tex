@@ -50,11 +50,10 @@
     \begin{itemize}
         \item Motivation and background
         \item Goal of the project
-        \item Overview of the editor
+        \item Conclusion
         \item Background
         \item Implementation
         \item Editor examples
-        \item Conclusion
         \item Questions
     \end{itemize}
 \end{frame}
@@ -74,6 +73,7 @@
               \end{itemize}
     \end{itemize}
 \end{frame}
+
 
 \begin{frame}[hvid]
     \frametitle{Motivation and background (Continued)}
@@ -151,330 +151,185 @@
 \end{frame}
 
 \begin{frame}[hvid]
-    \frametitle{Conclusion}
+    \frametitle{Picking good language examples}
+    \begin{itemize}
+        \item What makes a good set of examples?
+              \begin{itemize}
+                  \item Different paradigms and purposes:
+                        \begin{itemize}
+                            \item General purpose programming language
+                            \item Domain-specific language
+                            \item Markup language
+                        \end{itemize}
+                  \item Popular (present in GitHub top 30 ranking\footfullcite{prog-lang-metrics})
+              \end{itemize}
+              \pause
+        \item Examples:
+              \begin{itemize}
+                  \item C
+                  \item SQL
+                  \item \LaTeX
+              \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{Picking good language examples (Continued)}
+
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item A C program with syntax errors
+
+        \end{itemize}
+        \vfill\null
+        \columnbreak
+        \includegraphics[width=0.4\textwidth]{img/cornell-ex.png}
+    \end{multicols}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{Picking good language examples (Continued)}
+
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item A SQL query with syntax
+
+        \end{itemize}
+        \vfill\null
+        \columnbreak
+        \includegraphics[width=0.4\textwidth]{img/cornell-ex.png}
+    \end{multicols}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{Picking good language examples (Continued)}
+
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item A \LaTeX document with syntax errors
+
+        \end{itemize}
+        \vfill\null
+        \columnbreak
+        \includegraphics[width=0.4\textwidth]{img/cornell-ex.png}
+    \end{multicols}
+\end{frame}
+
+
+\begin{frame}[hvid]
+    \frametitle{Conclusion of the project}
     \begin{itemize}
         \item MVP has been achieved
+        \item Conditional expressions have been implemented after submission
+        \item Still missing (wrt. criteria for a good implementation):
+              \begin{itemize}
+                  \item Handling context-sensitive syntax
+                  \item Views of code being edited
+              \end{itemize}
     \end{itemize}
     \includegraphics[width=\textwidth]{img/repl-editor.png}
 \end{frame}
 
+
 \begin{frame}[hvid]
-    \frametitle{The Synthesizer Generator}
+    \frametitle{Implementation}
     \begin{itemize}
-        \item Overview
-        \item Attribute grammar specifications
+        \item Representing syntax
+        \item Code generation vs. generic model
+        \item Generating source code
+        \item Editor expressions
     \end{itemize}
 \end{frame}
 
 \begin{frame}[hvid]
-    \frametitle{Centaur System}
+    \frametitle{Representing syntax}
     \begin{itemize}
-        \item Formalism in Metal language
-        \item Maintaining syntactically correct trees
+        \item Abstract syntax per Robert Harper\footcite{harper}
+              \begin{itemize}
+                  \item Set of sorts $\mathcal{S}$
+                  \item Arity-indexed family of operators $\mathcal{O}$
+                  \item Sort-indexed family of variables $\mathcal{X}$
+                  \item Binders: $(\vec{x_1}.x_1)s$
+              \end{itemize}
+              \pause
+        \item How can a user provide this in a non-challenging way?
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Representing syntax (Continued)}
+    \begin{itemize}
+        \item Metal\footcite{metal}
+        \pause
+        \item Zephyr ASDL\footcite{zephyr}
+        \pause
+        \item ASN.1\footcite{asn1}
+              \pause
+        \item Common problem: no support for binders
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Representing syntax (Continued)}
+    \begin{multicols}{2}
+        \begin{itemize}
+            \item Let's make our own specification language
+                  \vspace{1cm}
+
+                  \includegraphics<2->[width=0.45\textwidth]{img/spec-lang-parseable-ex.png}
+        \end{itemize}
+
+        \columnbreak
+        \includegraphics[width=0.5\textwidth]{img/spec-lang-ex.png}
+    \end{multicols}
+
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{Code generation or generic model?}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{Generating source code}
+    \begin{itemize}
+        \item Elm CodeGen package\footcite{elm-codegen-package}
     \end{itemize}
 \end{frame}
 
 \begin{frame}[hvid]
-    \frametitle{Related Work: Partial Evaluation}
-    \begin{itemize}
-        \item Program specialization
-        \item Balancing generality and modularity
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Program Specialization}
-    \begin{itemize}
-        \item General program and static input
-        \item Specialized programs for performance
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Balancing Generality and Modularity}
-    \begin{itemize}
-        \item Maintaining single program
-        \item Specialization for different languages
-    \end{itemize}
-\end{frame}
-
-
-\begin{frame}[hvid]
-    \frametitle{Problem Statement}
-    \begin{itemize}
-        \item Edit abstract syntax directly
-        \item Handle syntax of any language
-        \item Context-sensitive syntax
-        \item Multiple views of code
-        \item User-friendly specification
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Criteria for Solution}
-    \begin{itemize}
-        \item Direct editing of abstract syntax
-        \item Generic handling of any language
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Example Languages}
+    \frametitle{Editor examples}
     \begin{itemize}
         \item C
         \item SQL
-        \item LaTeX
+        \item \LaTeX
     \end{itemize}
 \end{frame}
 
+
 \begin{frame}[hvid]
-    \frametitle{Report Structure}
+    \frametitle{C}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{SQL}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{\LaTeX}
+\end{frame}
+
+\begin{frame}[hvid]
+    \frametitle{Future work}
+
     \begin{itemize}
-        \item Introduction
-        \item Background
-        \item Implementation
-        \item Editor Examples
-        \item Conclusion
+        \item
     \end{itemize}
 \end{frame}
 
-\begin{frame}[hvid]
-    \frametitle{Abstract Syntax}
-    \begin{itemize}
-        \item Abstract Syntax Trees (AST)
-        \item Abstract Binding Trees (ABT)
-    \end{itemize}
-\end{frame}
+
 
 \begin{frame}[hvid]
-    \frametitle{Abstract Syntax Trees (AST)}
-    \begin{itemize}
-        \item Definition and purpose
-        \item Example structures
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Abstract Binding Trees (ABT)}
-    \begin{itemize}
-        \item Binding mechanisms
-        \item Examples and benefits
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Generalized Editor Calculus}
-    \begin{itemize}
-        \item Abstract syntax
-        \item Semantics
-        \item Encoding in extended $\lambda$-calculus
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Abstract Syntax of the Editor Calculus}
-    \begin{itemize}
-        \item Sorts and operators
-        \item Cursor and holes for every sort
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Semantics of the Editor Calculus}
-    \begin{itemize}
-        \item Reduction rules
-        \item Satisfaction rules
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Encoding in Extended $\lambda$-calculus}
-    \begin{itemize}
-        \item Simply typed $\lambda$-calculus
-        \item Encoding examples
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Implementation Overview}
-    \begin{itemize}
-        \item Goals and criteria
-        \item Tools and technologies used
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Representing Syntax}
-    \begin{itemize}
-        \item Set of sorts
-        \item Arity-indexed operators
-        \item Sort-indexed variables
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Syntax Representation}
-    \begin{itemize}
-        \item Definition of sorts and operators
-        \item Example syntax representations
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Code Generation vs Generic Model}
-    \begin{itemize}
-        \item Approaches to code generation
-        \item Benefits and challenges of each approach
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Generating Source Code}
-    \begin{itemize}
-        \item Parsing and syntax trees
-        \item Code generation process
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Parsing Syntax Trees}
-    \begin{itemize}
-        \item Parsing methods
-        \item Examples and challenges
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Source Code Generation}
-    \begin{itemize}
-        \item Tools and techniques
-        \item Examples of generated code
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Editor Expressions}
-    \begin{itemize}
-        \item Definition and usage
-        \item Examples of editor expressions
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Atomic Prefix Commands}
-    \begin{itemize}
-        \item Commands for tree traversal
-        \item Examples and benefits
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Conditional Expressions}
-    \begin{itemize}
-        \item Logical expressions for editor actions
-        \item Examples of conditions
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Editor Example: C}
-    \begin{itemize}
-        \item Syntax and operations
-        \item Demonstration of editor functionalities
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{C: Syntax Representation}
-    \begin{itemize}
-        \item Definition of C syntax
-        \item Examples and usage
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{C: Editor Operations}
-    \begin{itemize}
-        \item Editing operations in C
-        \item Examples and benefits
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Editor Example: SQL}
-    \begin{itemize}
-        \item Syntax and operations
-        \item Demonstration of editor functionalities
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{SQL: Syntax Representation}
-    \begin{itemize}
-        \item Definition of SQL syntax
-        \item Examples and usage
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{SQL: Editor Operations}
-    \begin{itemize}
-        \item Editing operations in SQL
-        \item Examples and benefits
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Editor Example: LaTeX}
-    \begin{itemize}
-        \item Syntax and operations
-        \item Demonstration of editor functionalities
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{LaTeX: Syntax Representation}
-    \begin{itemize}
-        \item Definition of LaTeX syntax
-        \item Examples and usage
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{LaTeX: Editor Operations}
-    \begin{itemize}
-        \item Editing operations in LaTeX
-        \item Examples and benefits
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Conclusion}
-    \begin{itemize}
-        \item Summary of findings
-        \item Achievements of the project
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Future Work}
-    \begin{itemize}
-        \item Implementation of missing editor expressions
-        \item Multiple views and pretty-printing
-        \item Integration with other languages
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Future Directions}
-    \begin{itemize}
-        \item Extending the editor's capabilities
-        \item Potential applications and improvements
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[hvid]
-    \frametitle{Questions}
+    \frametitle{}
     \centering
     \large{Thank you for your attention!}
 \end{frame}

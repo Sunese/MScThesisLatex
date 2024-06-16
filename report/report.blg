@@ -23,51 +23,51 @@ Reallocating 'singl_function' (item size: 4) to 100 items.
 Database file #1: report-blx.bib
 Database file #2: references/ref.bib
 Warning--string name "pub-iso" is undefined
---line 143 of file references/ref.bib
+--line 147 of file references/ref.bib
 Warning--string name "pub-iso:adr" is undefined
---line 145 of file references/ref.bib
+--line 149 of file references/ref.bib
 Biblatex version: 3.19
 Reallocating 'wiz_functions' (item size: 4) to 9000 items.
 Reallocating 'singl_function' (item size: 4) to 100 items.
 You've used 25 entries,
             6399 wiz_defined-function locations,
-            1372 strings with 14087 characters,
-and the built_in function-call counts, 220296 in all, are:
-= -- 18629
-> -- 2513
-< -- 709
-+ -- 5796
-- -- 933
-* -- 16665
-:= -- 25466
+            1372 strings with 14090 characters,
+and the built_in function-call counts, 220147 in all, are:
+= -- 18578
+> -- 2544
+< -- 714
++ -- 5884
+- -- 952
+* -- 16592
+:= -- 25517
 add.period$ -- 0
 call.type$ -- 25
 change.case$ -- 321
 chr.to.int$ -- 48
 cite$ -- 48
-duplicate$ -- 21121
-empty$ -- 19785
-format.name$ -- 1635
-if$ -- 44501
+duplicate$ -- 21333
+empty$ -- 19671
+format.name$ -- 1655
+if$ -- 44394
 int.to.chr$ -- 0
 int.to.str$ -- 66
 missing$ -- 0
-newline$ -- 890
+newline$ -- 896
 num.names$ -- 1129
-pop$ -- 8844
+pop$ -- 8869
 preamble$ -- 1
-purify$ -- 449
+purify$ -- 452
 quote$ -- 0
-skip$ -- 4360
+skip$ -- 4374
 stack$ -- 0
-substring$ -- 37318
-swap$ -- 3757
-text.length$ -- 679
+substring$ -- 36973
+swap$ -- 3776
+text.length$ -- 685
 text.prefix$ -- 24
 top$ -- 1
 type$ -- 838
 warning$ -- 0
-while$ -- 2879
+while$ -- 2915
 width$ -- 0
-write$ -- 866
+write$ -- 872
 (There were 2 warnings)
